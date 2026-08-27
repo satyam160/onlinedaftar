@@ -12,7 +12,7 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-router.post('/create-escrow-order', requireAuth, asyncHandler(async (req, res) => {
+router.post('/create-escrow-order', express.json(), requireAuth, asyncHandler(async (req, res) => {
   const { taskId } = req.body;
 
   const taskResult = await pool.query('SELECT * FROM tasks WHERE id = $1', [taskId]);
@@ -53,7 +53,7 @@ router.post('/create-escrow-order', requireAuth, asyncHandler(async (req, res) =
   });
 }));
 
-router.post('/verify', requireAuth, asyncHandler(async (req, res) => {
+router.post('/verify', express.json(), requireAuth, asyncHandler(async (req, res) => { {
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature, taskId } = req.body;
 
   const expectedSignature = crypto
