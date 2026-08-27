@@ -29,9 +29,6 @@ router.post('/create-escrow-order', express.json(), requireAuth, asyncHandler(as
       notes: { taskId: task.id, purpose: 'escrow_fund' },
     });
   } catch (err) {
-    // Most common cause: RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET in .env are
-    // still the placeholder values, or wrong. Surface that clearly instead
-    // of a generic crash.
     return res.status(502).json({
       error: 'Razorpay rejected the request — check your RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in .env are real test keys.',
       razorpayError: err.error?.description || err.message,
@@ -53,7 +50,7 @@ router.post('/create-escrow-order', express.json(), requireAuth, asyncHandler(as
   });
 }));
 
-router.post('/verify', express.json(), requireAuth, asyncHandler(async (req, res) => { {
+router.post('/verify', express.json(), requireAuth, asyncHandler(async (req, res) => {
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature, taskId } = req.body;
 
   const expectedSignature = crypto
