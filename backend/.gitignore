@@ -1,0 +1,16 @@
+# Never commit secrets
+.env
+
+# Dependencies (reinstalled via npm install, don't need to be in git)
+node_modules/
+
+# Logs
+npm-debug.log*
+*.log
+
+# OS junk files
+.DS_Store
+
+# Editor folders
+.vscode/
+.idea/
