@@ -7,8 +7,16 @@ const otpRoutes = require('./routes/otp');
 const taskRoutes = require('./routes/tasks');
 const paymentRoutes = require('./routes/payments');
 const walletRoutes = require('./routes/wallet');
+const notificationRoutes = require('./routes/notifications');
+const bankAccountRoutes = require('./routes/bankaccount');
 
 const app = express();
+
+// Render (and most hosting platforms) sit behind a reverse proxy, which
+// adds an X-Forwarded-For header. Without telling Express to trust it,
+// express-rate-limit throws ERR_ERL_UNEXPECTED_X_FORWARDED_FOR instead of
+// working — this is what crashed the OTP-send request.
+app.set('trust proxy', 1);
 
 app.use(cors({ origin: process.env.FRONTEND_URL || '*' }));
 
@@ -21,6 +29,8 @@ app.use('/api/auth', express.json(), authRoutes);
 app.use('/api/otp', express.json(), otpRoutes);
 app.use('/api/tasks', express.json(), taskRoutes);
 app.use('/api/wallet', express.json(), walletRoutes);
+app.use('/api/notifications', express.json(), notificationRoutes);
+app.use('/api/bank-account', express.json(), bankAccountRoutes);
 app.use('/api/payments', paymentRoutes); // payments.js applies json/raw per-route
 
 app.get('/health', (req, res) => res.json({ ok: true }));
