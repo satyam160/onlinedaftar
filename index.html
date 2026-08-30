@@ -725,6 +725,10 @@
 
     <!-- Step 0: choose method + enter identifier -->
     <div class="auth-step active" id="authStepIdentifier">
+      <div class="field">
+        <label>Full name</label>
+        <input type="text" id="authName" placeholder="Priya Sharma">
+      </div>
       <div class="auth-tabs">
         <button class="auth-tab active" data-method="mobile" onclick="switchAuthMethod('mobile', this)">Mobile</button>
         <button class="auth-tab" data-method="email" onclick="switchAuthMethod('email', this)">Email</button>
@@ -738,6 +742,7 @@
         <input type="email" id="authEmail" placeholder="you@example.com">
       </div>
       <button class="btn block" onclick="sendAuthOtp()" id="sendOtpBtn">Send OTP</button>
+      <div class="auth-sub" style="margin-top:12px;font-size:11px;">New here? This creates your account. Already signed up? Just enter the same number/email again — name is optional after your first login.</div>
     </div>
 
     <!-- Step 1: enter OTP -->
@@ -793,6 +798,10 @@
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
         Post a Task
       </button>
+      <button class="nav-item" data-tab="mytasks" onclick="showTab('mytasks', this); loadPostedTasksFromBackend();">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        My Tasks
+      </button>
       <button class="nav-item" data-tab="profile" onclick="showTab('profile', this)">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>
         Profile
@@ -814,11 +823,11 @@
     <section class="tab-panel active" id="overview">
       <div class="topbar">
         <div>
-          <h1>Namaste, Priya</h1>
-          <div class="sub">Tuesday, 14 July — 3 tasks in progress</div>
+          <h1 id="dashGreeting">Namaste 👋</h1>
+          <div class="sub" id="dashSub">Sign in to see your real dashboard</div>
         </div>
         <div class="wallet-pill">
-          <div class="avatar">PS</div>
+          <div class="avatar" id="dashAvatar">··</div>
           <div>
             <div class="lbl">Balance</div>
             <div class="amt" id="balanceWalletPill">₹14,280</div>
@@ -829,7 +838,7 @@
       <div class="stat-grid">
         <div class="card hero-card">
           <div class="lbl">Earned this month</div>
-          <div class="big" data-countup="14280">₹0</div>
+          <div class="big" id="earnedThisMonth" data-countup="14280">₹0</div>
           <div class="delta">↑ ₹2,140 vs last month</div>
           <div class="bars">
             <div class="bar" style="height:40%"><span>Mo</span></div>
@@ -977,8 +986,8 @@
       <div class="passbook">
         <div class="passbook-head">
           <div>
-            <div class="acct">A/C · ODR-4471-8823</div>
-            <h2>Priya Sharma</h2>
+            <div class="acct" id="passbookAcct">A/C · —</div>
+            <h2 id="passbookName">Your account</h2>
           </div>
           <div class="passbook-bal">
             <div class="lbl">Available balance</div>
@@ -1165,6 +1174,22 @@
     </section>
 
     <!-- PROFILE -->
+    <!-- MY TASKS (poster review) -->
+    <section class="tab-panel" id="mytasks">
+      <div class="topbar">
+        <div>
+          <h1>My posted tasks</h1>
+          <div class="sub">Review submitted proof and release payment</div>
+        </div>
+      </div>
+      <div id="myTasksList">
+        <div style="text-align:center;padding:50px 20px;color:var(--muted);">
+          <div style="font-family:'Fraunces';font-size:17px;color:var(--text);margin-bottom:8px;">No posted tasks yet</div>
+          <div style="font-size:13px;">Post a task in <b>Poster mode</b> to see it and its submissions here.</div>
+        </div>
+      </div>
+    </section>
+
     <section class="tab-panel" id="profile">
       <div class="topbar">
         <div>
@@ -1174,16 +1199,16 @@
       </div>
 
       <div class="profile-head">
-        <div class="profile-avatar">PS</div>
+        <div class="profile-avatar" id="profileAvatar">PS</div>
         <div>
-          <h2>Priya Sharma
-            <span class="verified-pill">
+          <h2 id="profileName">Your name
+            <span class="verified-pill" id="profileVerifiedPill">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.35 8.87a1 1 0 01-.6-.01C8.5 20.5 5 18 5 13V6a1 1 0 011-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 011.52 0C15.51 3.81 18 5 20 5a1 1 0 011 1z"/><path d="M9 12l2 2 4-4"/></svg>
-              Verified
+              <span id="profileVerifiedLabel">Verified</span>
             </span>
           </h2>
-          <div class="meta">Ranchi, Jharkhand · Member since Feb 2025</div>
-          <div class="stars">★★★★★ <span style="color:var(--muted);font-size:12.5px;">4.9 · 118 reviews</span></div>
+          <div class="meta" id="profileMeta">Member since —</div>
+          <div class="stars" id="profileStars">☆☆☆☆☆ <span style="color:var(--muted);font-size:12.5px;">No ratings yet</span></div>
         </div>
       </div>
 
@@ -1207,17 +1232,82 @@
           <div class="badge-icon-circle mustard">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="6" height="10" rx="1"/><rect x="9" y="5" width="6" height="15" rx="1"/><rect x="15" y="13" width="6" height="7" rx="1"/></svg>
           </div>
-          <div class="badge-title">150 Tasks</div>
-          <div class="cap">8 to go</div>
+          <div class="badge-title" id="profileTaskCountTitle">0 Tasks</div>
+          <div class="cap">Keep going</div>
         </div>
       </div>
 
-      <div class="section-head"><h2>Settings</h2></div>
+      <div class="section-head"><h2>Account details</h2></div>
       <div class="ledger">
-        <div class="settings-row"><span class="lbl">Bank account</span><span class="val">HDFC •••• 4471</span></div>
-        <div class="settings-row"><span class="lbl">UPI ID</span><span class="val">priya.s@okhdfc</span></div>
-        <div class="settings-row"><span class="lbl">Notifications</span><span class="val">On</span></div>
-        <div class="settings-row"><span class="lbl">Language</span><span class="val">Hindi + English</span></div>
+        <div class="settings-row"><span class="lbl">Mobile</span><span class="val" id="profilePhoneVal">Not linked</span></div>
+        <div class="settings-row"><span class="lbl">Email</span><span class="val" id="profileEmailVal">Not linked</span></div>
+        <div class="settings-row"><span class="lbl">Payout method</span><span class="val" id="profilePayoutVal">Not linked</span></div>
+      </div>
+
+      <div class="section-head"><h2>About you</h2></div>
+      <div class="form-card">
+        <div class="field">
+          <label>Short description</label>
+          <textarea id="profileBio" placeholder="e.g. Freelance data-entry specialist, available evenings and weekends."></textarea>
+        </div>
+        <button class="btn block" onclick="saveProfileBio()" id="saveBioBtn">Save changes</button>
+      </div>
+
+      <div class="section-head"><h2>Add another way to sign in</h2></div>
+      <div class="form-card">
+        <div class="auth-demo-note show" style="color:var(--muted);background:var(--surface-2);border-color:var(--border-strong);margin-bottom:16px;">
+          Signed up with mobile? Add your email here (or vice versa) so you can log in either way.
+        </div>
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-linkmethod="mobile" onclick="switchLinkMethod('mobile', this)">Add mobile</button>
+          <button class="auth-tab" data-linkmethod="email" onclick="switchLinkMethod('email', this)">Add email</button>
+        </div>
+        <div id="linkFieldsMobile">
+          <div class="field"><label>Mobile number</label><input type="tel" id="linkMobileInput" placeholder="98765 43210" maxlength="10"></div>
+        </div>
+        <div id="linkFieldsEmail" style="display:none">
+          <div class="field"><label>Email address</label><input type="email" id="linkEmailInput" placeholder="you@example.com"></div>
+        </div>
+        <button class="btn block" onclick="sendLinkOtp()" id="sendLinkOtpBtn">Send verification code</button>
+        <div id="linkOtpStep" style="display:none;margin-top:16px;">
+          <div class="field"><label>Enter the code</label><input type="text" id="linkOtpCode" placeholder="6-digit code" maxlength="6"></div>
+          <button class="btn block" onclick="verifyLinkOtp()">Verify &amp; link</button>
+        </div>
+      </div>
+
+      <div class="section-head"><h2>Link a payout method</h2></div>
+      <div class="form-card">
+        <div class="auth-demo-note show" style="color:var(--muted);background:var(--surface-2);border-color:var(--border-strong);margin-bottom:16px;">
+          🔒 Your account number is sent straight to Razorpay and tokenized — we only ever store the last 4 digits.
+        </div>
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-paymethod="bank" onclick="switchPayoutMethod('bank', this)">Bank account</button>
+          <button class="auth-tab" data-paymethod="upi" onclick="switchPayoutMethod('upi', this)">UPI</button>
+        </div>
+        <div id="payoutFieldsBank">
+          <div class="field">
+            <label>Account holder name</label>
+            <input type="text" id="bankHolderName" placeholder="As per bank records">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Account number</label>
+              <input type="text" id="bankAccountNumber" placeholder="0000000000">
+            </div>
+            <div class="field">
+              <label>IFSC code</label>
+              <input type="text" id="bankIfsc" placeholder="HDFC0000123" style="text-transform:uppercase;">
+            </div>
+          </div>
+          <button class="btn block" onclick="linkBankAccount()" id="linkBankBtn">Link bank account</button>
+        </div>
+        <div id="payoutFieldsUpi" style="display:none">
+          <div class="field">
+            <label>UPI ID</label>
+            <input type="text" id="upiIdInput" placeholder="yourname@okhdfc">
+          </div>
+          <button class="btn block" onclick="linkUpiAccount()" id="linkUpiBtn">Link UPI ID</button>
+        </div>
       </div>
     </section>
 
@@ -1272,7 +1362,7 @@
   // Point this at your running backend (see the onlinedaftar-backend
   // starter kit). Leave the backend not running and the app works fully
   // in simulated/demo mode — no server required to preview this file.
-  const API_BASE = 'http://localhost:4000/api';
+  const API_BASE = 'https://onlinedaftar-backend.onrender.com/api';
   let authToken = null;
 
   function authHeaders(){
@@ -1327,8 +1417,378 @@
       const data = await res.json();
       state.balance = Math.round(data.balancePaise / 100);
       updateBalanceUI();
-    } catch(e){ /* backend not running — keep the demo balance */ }
+      renderRealWallet(data.transactions || []);
+    } catch(e){ /* backend not running — keep the demo balance and demo entries */ }
   }
+
+  function renderRealWallet(transactions){
+    // "Earned this month" — sum of escrow_release payments (money you
+    // actually got paid) that landed in the current calendar month.
+    const now = new Date();
+    const monthEarnedPaise = transactions
+      .filter(t => t.type === 'escrow_release' && t.status === 'paid')
+      .filter(t => {
+        const d = new Date(t.created_at);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      })
+      .reduce((sum, t) => sum + Number(t.amount_paise), 0);
+    const earnedEl = document.getElementById('earnedThisMonth');
+    if(earnedEl) earnedEl.textContent = '₹' + Math.round(monthEarnedPaise/100).toLocaleString('en-IN');
+
+    if(transactions.length === 0) return; // nothing real yet — leave demo passbook rows as filler
+
+    // Real passbook rows — completely replaces the static demo entries.
+    const passbookBody = document.getElementById('passbookBody');
+    passbookBody.innerHTML = transactions.map(t => {
+      const amt = Math.round(t.amount_paise / 100).toLocaleString('en-IN');
+      const isIncoming = t.type === 'escrow_release';
+      const label = t.task_title ? (t.task_title.length > 34 ? t.task_title.slice(0,34)+'…' : t.task_title) :
+                    (t.type === 'withdrawal' ? 'Withdrawal to UPI' :
+                     t.type === 'escrow_fund' ? 'Escrow funded' : t.type);
+      const date = new Date(t.created_at).toLocaleDateString('en-IN', {day:'numeric', month:'short'}) + ', ' +
+                   new Date(t.created_at).toLocaleTimeString('en-IN', {hour:'numeric', minute:'2-digit'});
+      let stampClass = 'pending', stampLabel = t.status.toUpperCase(), stampIcon = iconClock();
+      if(t.status === 'paid'){ stampClass = 'paid'; stampLabel = 'PAID'; stampIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'; }
+      else if(t.type === 'withdrawal'){ stampClass = 'verified'; stampLabel = 'SENT'; stampIcon = iconArrow(); }
+      return `
+        <tr>
+          <td class="desc"><div class="title">${label}</div><div class="date">${date}</div></td>
+          <td>${t.type.replace('_',' ')}</td>
+          <td><span class="stamp ${stampClass}">${stampIcon}${stampLabel}</span></td>
+          <td class="amt-cell ${isIncoming ? 'in' : 'out'}">${isIncoming ? '+' : '−'}₹${amt}</td>
+        </tr>`;
+    }).join('');
+
+    // Dashboard "Today's ledger" — mirror the 3 most recent real entries.
+    const todayLedger = document.getElementById('todayLedger');
+    const recent = transactions.slice(0, 3);
+    todayLedger.innerHTML = recent.map(t => {
+      const amt = Math.round(t.amount_paise / 100).toLocaleString('en-IN');
+      const isDone = t.status === 'paid';
+      const label = t.task_title || (t.type === 'withdrawal' ? 'Withdrawal to UPI' : t.type.replace('_',' '));
+      const time = new Date(t.created_at).toLocaleTimeString('en-IN', {hour:'numeric', minute:'2-digit'});
+      return `
+        <div class="ledger-row ${isDone ? 'done' : ''}">
+          <div class="check">${isDone ? '✓' : ''}</div>
+          <div class="info">
+            <div class="title">${label}</div>
+            <div class="meta">${t.status} · ${time}</div>
+          </div>
+          <div class="amt">${t.type === 'escrow_release' ? '+' : ''}₹${amt}</div>
+        </div>`;
+    }).join('');
+  }
+
+  // ===================== Profile (real user data) =====================
+  async function loadProfileFromBackend(){
+    try{
+      const [meRes, bankRes] = await Promise.all([
+        fetch(`${API_BASE}/auth/me`, { headers: authHeaders() }),
+        fetch(`${API_BASE}/bank-account`, { headers: authHeaders() })
+      ]);
+      if(meRes.ok){
+        const me = await meRes.json();
+        const initials = (me.name || '?').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+        const firstName = (me.name || 'there').split(' ')[0];
+
+        document.getElementById('profileAvatar').textContent = initials;
+        document.querySelector('#profileName').childNodes[0].textContent = me.name + ' ';
+        document.getElementById('profilePhoneVal').textContent = me.phone || 'Not linked';
+        document.getElementById('profileEmailVal').textContent = me.email || 'Not linked';
+        const joined = new Date(me.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+        document.getElementById('profileMeta').textContent = 'Member since ' + joined;
+        document.getElementById('profileBio').value = me.bio || '';
+
+        const verifiedPill = document.getElementById('profileVerifiedPill');
+        document.getElementById('profileVerifiedLabel').textContent = me.kyc_verified ? 'Verified' : 'Unverified';
+        verifiedPill.style.opacity = me.kyc_verified ? '1' : '0.5';
+
+        if(me.rating_count > 0){
+          const fullStars = Math.round(me.rating_avg);
+          document.getElementById('profileStars').innerHTML =
+            '★'.repeat(fullStars) + '☆'.repeat(5-fullStars) +
+            ` <span style="color:var(--muted);font-size:12.5px;">${me.rating_avg} · ${me.rating_count} reviews</span>`;
+        } else {
+          document.getElementById('profileStars').innerHTML =
+            `☆☆☆☆☆ <span style="color:var(--muted);font-size:12.5px;">No ratings yet</span>`;
+        }
+
+        document.getElementById('dashGreeting').textContent = 'Namaste, ' + firstName;
+        document.getElementById('dashSub').textContent = me.phone ? ('+91 ' + me.phone) : (me.email || 'Welcome back');
+        document.getElementById('dashAvatar').textContent = initials;
+
+        document.getElementById('passbookName').textContent = me.name;
+        document.getElementById('passbookAcct').textContent = 'A/C · ' + me.id.slice(0, 8).toUpperCase();
+      }
+      if(bankRes.ok){
+        const bank = await bankRes.json();
+        const payoutVal = document.getElementById('profilePayoutVal');
+        if(bank.linked){
+          payoutVal.textContent = bank.upiId ? bank.upiId : ('•••• ' + bank.bankAccountLast4);
+        } else {
+          payoutVal.textContent = 'Not linked';
+        }
+        if(!bank.linked && !document.getElementById('payoutBanner')){
+          const banner = document.createElement('div');
+          banner.id = 'payoutBanner';
+          banner.className = 'escrow-note';
+          banner.style.marginBottom = '20px';
+          banner.innerHTML = `💳 You haven't linked a payout method yet — <a href="javascript:void(0)" onclick="showTab('profile', document.querySelector('[data-tab=profile]'))" style="color:var(--mint);text-decoration:underline;">add a bank account or UPI ID</a> so you can withdraw earnings.`;
+          const overview = document.getElementById('overview');
+          overview.insertBefore(banner, overview.querySelector('.stat-grid'));
+        }
+      }
+    } catch(e){ /* backend not running — profile stays as demo placeholder */ }
+  }
+
+  function switchPayoutMethod(method, tabEl){
+    tabEl.closest('.form-card').querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+    document.getElementById('payoutFieldsBank').style.display = method === 'bank' ? 'block' : 'none';
+    document.getElementById('payoutFieldsUpi').style.display = method === 'upi' ? 'block' : 'none';
+  }
+
+  async function saveProfileBio(){
+    if(!authToken){ showToast('Log in first.'); return; }
+    const bio = document.getElementById('profileBio').value.trim();
+    const btn = document.getElementById('saveBioBtn');
+    btn.textContent = 'Saving…'; btn.disabled = true;
+    try{
+      const res = await fetch(`${API_BASE}/auth/profile`, {
+        method: 'PATCH', headers: authHeaders(),
+        body: JSON.stringify({ bio })
+      });
+      if(res.ok){ showToast('Profile updated.'); }
+      else { const data = await res.json().catch(()=>({})); showToast(data.error || 'Could not save.'); }
+    } catch(e){ showToast('Backend unreachable.'); }
+    btn.textContent = 'Save changes'; btn.disabled = false;
+  }
+
+  // ===================== Add a second sign-in method =====================
+  let linkMethod = 'mobile';
+  let linkIdentifier = '';
+
+  function switchLinkMethod(method, tabEl){
+    linkMethod = method;
+    tabEl.closest('.form-card').querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+    document.getElementById('linkFieldsMobile').style.display = method === 'mobile' ? 'block' : 'none';
+    document.getElementById('linkFieldsEmail').style.display = method === 'email' ? 'block' : 'none';
+    document.getElementById('linkOtpStep').style.display = 'none';
+  }
+
+  async function sendLinkOtp(){
+    if(!authToken){ showToast('Log in first.'); return; }
+    linkIdentifier = linkMethod === 'mobile'
+      ? document.getElementById('linkMobileInput').value.trim()
+      : document.getElementById('linkEmailInput').value.trim();
+    if(!linkIdentifier){ showToast('Enter a value first.'); return; }
+
+    const btn = document.getElementById('sendLinkOtpBtn');
+    btn.textContent = 'Sending…'; btn.disabled = true;
+    try{
+      const res = await fetch(`${API_BASE}/otp/link-send`, {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ identifier: linkIdentifier, method: linkMethod })
+      });
+      const data = await res.json();
+      if(!res.ok){ showToast(data.error || 'Could not send code.'); }
+      else {
+        showToast('Code sent — check your ' + (linkMethod === 'email' ? 'inbox' : 'phone') + '.');
+        document.getElementById('linkOtpStep').style.display = 'block';
+      }
+    } catch(e){ showToast('Backend unreachable.'); }
+    btn.textContent = 'Send verification code'; btn.disabled = false;
+  }
+
+  async function verifyLinkOtp(){
+    const code = document.getElementById('linkOtpCode').value.trim();
+    if(code.length !== 6){ showToast('Enter the full 6-digit code.'); return; }
+    try{
+      const res = await fetch(`${API_BASE}/otp/link-verify`, {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ identifier: linkIdentifier, method: linkMethod, code })
+      });
+      const data = await res.json();
+      if(!res.ok){ showToast(data.error || 'Could not verify.'); return; }
+      showToast((linkMethod === 'email' ? 'Email' : 'Mobile') + ' linked to your account.');
+      document.getElementById('linkOtpStep').style.display = 'none';
+      document.getElementById('linkOtpCode').value = '';
+      loadProfileFromBackend();
+    } catch(e){ showToast('Backend unreachable.'); }
+  }
+
+  async function linkBankAccount(){
+    if(!authToken){ showToast('Log in first to link a payout account.'); return; }
+    const accountHolderName = document.getElementById('bankHolderName').value.trim();
+    const accountNumber = document.getElementById('bankAccountNumber').value.trim();
+    const ifsc = document.getElementById('bankIfsc').value.trim();
+    const btn = document.getElementById('linkBankBtn');
+    btn.textContent = 'Linking…'; btn.disabled = true;
+    try{
+      const res = await fetch(`${API_BASE}/bank-account/link-bank`, {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ accountHolderName, accountNumber, ifsc })
+      });
+      const data = await res.json();
+      if(!res.ok){ showToast(data.error || 'Could not link bank account.'); }
+      else {
+        showToast('Bank account linked — ending in ' + data.last4);
+        document.getElementById('bankAccountNumber').value = '';
+        loadProfileFromBackend();
+      }
+    } catch(e){ showToast('Backend unreachable — could not link account.'); }
+    btn.textContent = 'Link bank account'; btn.disabled = false;
+  }
+
+  async function linkUpiAccount(){
+    if(!authToken){ showToast('Log in first to link a payout account.'); return; }
+    const upiId = document.getElementById('upiIdInput').value.trim();
+    const btn = document.getElementById('linkUpiBtn');
+    btn.textContent = 'Linking…'; btn.disabled = true;
+    try{
+      const res = await fetch(`${API_BASE}/bank-account/link-upi`, {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ upiId })
+      });
+      const data = await res.json();
+      if(!res.ok){ showToast(data.error || 'Could not link UPI.'); }
+      else {
+        showToast('UPI linked: ' + data.upiId);
+        loadProfileFromBackend();
+      }
+    } catch(e){ showToast('Backend unreachable — could not link UPI.'); }
+    btn.textContent = 'Link UPI ID'; btn.disabled = false;
+  }
+
+  // ===================== My Tasks (proof review / approve / reject) =====================
+  async function loadPostedTasksFromBackend(){
+    const list = document.getElementById('myTasksList');
+    if(!authToken) return; // keep the default empty-state placeholder
+    try{
+      const res = await fetch(`${API_BASE}/tasks/posted`, { headers: authHeaders() });
+      if(!res.ok) return;
+      const tasks = await res.json();
+      if(tasks.length === 0) return; // keep default empty state
+
+      list.innerHTML = tasks.map(t => {
+        const amt = Math.round(t.pay_paise/100).toLocaleString('en-IN');
+        let statusStamp = '';
+        if(t.status === 'draft') statusStamp = '<span class="stamp pending">UNFUNDED</span>';
+        else if(t.status === 'open') statusStamp = '<span class="stamp pending">OPEN — NO WORKER YET</span>';
+        else if(t.status === 'accepted') statusStamp = '<span class="stamp pending">IN PROGRESS</span>';
+        else if(t.status === 'submitted') statusStamp = '<span class="stamp review">AWAITING YOUR REVIEW</span>';
+        else if(t.status === 'approved') statusStamp = '<span class="stamp paid">APPROVED &amp; PAID</span>';
+        else if(t.status === 'rejected') statusStamp = '<span class="stamp review">REJECTED</span>';
+
+        let submissionBlock = '';
+        if(t.status === 'submitted' && t.submission_id){
+          submissionBlock = `
+            <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-strong);">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Submitted by <b>${t.worker_name || 'worker'}</b></div>
+              ${t.submission_note ? `<div style="font-size:13px;margin-bottom:6px;">"${t.submission_note}"</div>` : ''}
+              ${t.proof_url ? `<a href="${t.proof_url}" target="_blank" style="font-size:12.5px;color:var(--gold-soft);">View proof link →</a>` : ''}
+              <div style="display:flex;gap:10px;margin-top:10px;">
+                <button class="btn" style="flex:1" onclick="approveSubmission('${t.id}')">Approve &amp; pay ₹${amt}</button>
+                <button class="btn ghost" style="flex:1" onclick="rejectSubmission('${t.id}')">Reject</button>
+              </div>
+            </div>`;
+        }
+
+        return `
+          <div class="task-card" style="margin-bottom:14px;">
+            <div class="task-card-top">
+              <span class="task-cat">${t.category}</span>
+              <span class="task-pay">₹${amt}</span>
+            </div>
+            <h3>${t.title}</h3>
+            <div style="margin-top:4px;">${statusStamp}</div>
+            ${submissionBlock}
+          </div>`;
+      }).join('');
+    } catch(e){ /* backend unreachable — keep default empty state */ }
+  }
+
+  async function approveSubmission(taskId){
+    try{
+      const res = await fetch(`${API_BASE}/tasks/${taskId}/approve`, { method: 'POST', headers: authHeaders() });
+      const data = await res.json();
+      if(!res.ok){ showToast(data.error || 'Could not approve.'); return; }
+      showToast('Approved — payment released to the worker.');
+      loadPostedTasksFromBackend();
+    } catch(e){ showToast('Backend unreachable.'); }
+  }
+
+  async function rejectSubmission(taskId){
+    const reason = prompt('Optional: reason for rejecting this submission') || '';
+    try{
+      const res = await fetch(`${API_BASE}/tasks/${taskId}/reject`, {
+        method: 'POST', headers: authHeaders(), body: JSON.stringify({ reason })
+      });
+      const data = await res.json();
+      if(!res.ok){ showToast(data.error || 'Could not reject.'); return; }
+      showToast('Submission rejected.');
+      loadPostedTasksFromBackend();
+    } catch(e){ showToast('Backend unreachable.'); }
+  }
+
+  // ===================== Notifications (real) =====================
+  async function loadNotificationsFromBackend(){
+    if(!authToken) return;
+    try{
+      const res = await fetch(`${API_BASE}/notifications`, { headers: authHeaders() });
+      if(!res.ok) return;
+      const data = await res.json();
+      const badge = document.getElementById('notifBadge');
+      const sub = document.getElementById('notifSub');
+      if(data.unreadCount > 0){
+        badge.style.display = 'flex';
+        badge.textContent = data.unreadCount;
+      } else {
+        badge.style.display = 'none';
+      }
+      sub.textContent = data.unreadCount + ' unread';
+
+      if(data.notifications.length === 0) return; // keep the demo notification content as filler
+
+      const iconFor = (title) => {
+        if(/approved|paid|released/i.test(title)) return {cls:'mint', svg:'<path d="M20 6L9 17l-5-5"/>'};
+        if(/rejected/i.test(title)) return {cls:'danger', svg:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>'};
+        if(/submission|review/i.test(title)) return {cls:'indigo', svg:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'};
+        return {cls:'mustard', svg:'<path d="M12 2l2.9 6.3 6.9.7-5.1 4.7 1.5 6.8L12 17l-6.2 3.5 1.5-6.8-5.1-4.7 6.9-.7z"/>'};
+      };
+
+      const container = document.querySelector('#notifications');
+      const existingLedgers = container.querySelectorAll('.ledger');
+      existingLedgers.forEach(l => l.remove());
+      const existingLabels = container.querySelectorAll('.notif-day-label');
+      existingLabels.forEach(l => l.remove());
+
+      const label = document.createElement('div');
+      label.className = 'notif-day-label';
+      label.textContent = 'Your activity';
+      container.appendChild(label);
+
+      const ledger = document.createElement('div');
+      ledger.className = 'ledger';
+      ledger.innerHTML = data.notifications.map(n => {
+        const icon = iconFor(n.title);
+        const time = new Date(n.created_at).toLocaleString('en-IN', { day:'numeric', month:'short', hour:'numeric', minute:'2-digit' });
+        return `
+          <div class="notif-row ${n.read ? '' : 'unread'}">
+            <div class="notif-icon ${icon.cls}">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${icon.svg}</svg>
+            </div>
+            <div class="notif-body">
+              <div class="title"><b>${n.title}</b> — ${n.body || ''}</div>
+              <div class="time">${time}</div>
+            </div>
+          </div>`;
+      }).join('');
+      container.appendChild(ledger);
+    } catch(e){ /* backend unreachable — keep demo notifications */ }
+  }
+
   let currentPaymentCallback = null;
 
   // ===================== Toast =====================
@@ -1604,6 +2064,9 @@
     const badge = document.getElementById('notifBadge');
     badge.style.display = 'none';
     document.getElementById('notifSub').textContent = '0 unread';
+    if(authToken){
+      fetch(`${API_BASE}/notifications/mark-all-read`, { method: 'POST', headers: authHeaders() }).catch(() => {});
+    }
   }
 
   // ===================== Task detail / submit proof =====================
@@ -1754,14 +2217,28 @@
     btn.textContent = 'Sending…'; btn.disabled = true;
 
     let usedBackend = false;
+    let backendErrorMsg = null;
     if(API_BASE){
       try{
         const resp = await fetch(API_BASE + '/otp/send', {
           method:'POST', headers:{'Content-Type':'application/json'},
           body: JSON.stringify({ identifier, method: authMethod })
         });
-        if(resp.ok){ usedBackend = true; }
-      } catch(e){ /* falls through to demo mode below */ }
+        if(resp.ok){
+          usedBackend = true;
+        } else {
+          const err = await resp.json().catch(() => ({}));
+          backendErrorMsg = err.error || `Server returned ${resp.status}`;
+        }
+      } catch(e){ /* genuinely unreachable — falls through to demo mode below */ }
+    }
+
+    if(backendErrorMsg){
+      // Backend WAS reached but rejected the request — show the real
+      // reason instead of pretending it's a connection problem.
+      showAuthError('Backend error: ' + backendErrorMsg);
+      btn.textContent = 'Send OTP'; btn.disabled = false;
+      return;
     }
 
     if(!usedBackend){
@@ -1824,7 +2301,7 @@
       try{
         const resp = await fetch(API_BASE + '/otp/verify', {
           method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ identifier: authIdentifier, method: authMethod, code })
+          body: JSON.stringify({ identifier: authIdentifier, method: authMethod, code, name: document.getElementById('authName').value.trim() || undefined })
         });
         const data = await resp.json();
         if(resp.ok){ verified = true; userName = data.user?.name; token = data.token; }
@@ -1845,7 +2322,7 @@
       document.body.classList.add('authed');
       if(token){
         authToken = token;
-        await Promise.all([loadTasksFromBackend(), loadWalletFromBackend()]);
+        await Promise.all([loadTasksFromBackend(), loadWalletFromBackend(), loadProfileFromBackend(), loadNotificationsFromBackend()]);
       }
       if(userName){
         const greeting = document.querySelector('#overview h1');
