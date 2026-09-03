@@ -103,6 +103,12 @@ router.post('/verify', otpVerifyLimiter, asyncHandler(async (req, res) => {
     );
     user = created.rows[0];
     await pool.query('INSERT INTO wallets (user_id, balance_paise) VALUES ($1, 0)', [user.id]);
+  } else if (name && name.trim() && name.trim() !== user.name) {
+    const updated = await pool.query(
+      `UPDATE users SET name = $1 WHERE id = $2 RETURNING *`,
+      [name.trim(), user.id]
+    );
+    user = updated.rows[0];
   }
 
   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '30d' });
