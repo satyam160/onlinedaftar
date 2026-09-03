@@ -549,6 +549,54 @@
   }
   .task-card:hover{border-color:var(--border-gold);transform:translateY(-3px);box-shadow:var(--shadow-md);}
   .task-card-top{display:flex;justify-content:space-between;align-items:flex-start;}
+
+  /* ---------- Video Market ---------- */
+  .video-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:18px;}
+  .video-card{
+    background:linear-gradient(165deg, var(--surface-2), var(--surface));
+    border:1px solid var(--border);border-radius:16px;overflow:hidden;
+    box-shadow:var(--shadow-sm);
+    transition:border-color .22s var(--ease), transform .22s var(--ease), box-shadow .22s var(--ease);
+  }
+  .video-card:hover{border-color:var(--border-gold);transform:translateY(-4px);box-shadow:var(--shadow-md);}
+  .video-thumb{
+    position:relative;aspect-ratio:16/9;
+    background:linear-gradient(135deg, var(--surface-3), var(--bg-alt));
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  .video-thumb img{width:100%;height:100%;object-fit:cover;}
+  .video-thumb .play-badge{
+    width:46px;height:46px;border-radius:50%;
+    background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);
+    display:flex;align-items:center;justify-content:center;color:var(--gold-hi);
+    border:1.5px solid rgba(255,255,255,0.25);
+  }
+  .video-thumb .license-tag{
+    position:absolute;top:10px;left:10px;
+    font-family:'JetBrains Mono';font-size:9.5px;font-weight:700;letter-spacing:0.8px;
+    padding:4px 9px;border-radius:5px;text-transform:uppercase;
+    background:rgba(20,15,7,0.7);backdrop-filter:blur(4px);
+    color:var(--gold-hi);border:1px solid var(--border-gold);
+  }
+  .video-card-body{padding:16px;display:flex;flex-direction:column;gap:8px;}
+  .video-card-body h3{margin:0;font-size:15px;font-weight:600;font-family:'Fraunces';}
+  .video-card-body p{margin:0;font-size:12.5px;color:var(--muted);}
+  .video-card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:4px;}
+  .video-seller{font-size:11.5px;color:var(--muted-2);}
+  .video-price{font-family:'JetBrains Mono';font-weight:700;font-size:17px;color:var(--gold-soft);}
+  .library-item{
+    display:flex;gap:14px;align-items:center;padding:16px;
+    background:linear-gradient(165deg, var(--surface-2), var(--surface));
+    border:1px solid var(--border);border-radius:14px;margin-bottom:12px;
+  }
+  .library-thumb{
+    width:88px;height:56px;border-radius:8px;flex-shrink:0;
+    background:linear-gradient(135deg, var(--surface-3), var(--bg-alt));
+    display:flex;align-items:center;justify-content:center;color:var(--gold);
+    overflow:hidden;
+  }
+  .library-thumb img{width:100%;height:100%;object-fit:cover;}
   .badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
   .badge-card{
     background:linear-gradient(165deg, var(--surface-2), var(--surface));border:1px solid var(--border);border-radius:13px;
@@ -802,6 +850,10 @@
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
         My Tasks
       </button>
+      <button class="nav-item" data-tab="videomarket" onclick="showTab('videomarket', this); loadListingsFromBackend();">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Video Market
+      </button>
       <button class="nav-item" data-tab="profile" onclick="showTab('profile', this)">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>
         Profile
@@ -917,6 +969,8 @@
         <div class="chip" data-cat="Content" onclick="filterTasks('Content', this)">Content</div>
         <div class="chip" data-cat="Delivery" onclick="filterTasks('Delivery', this)">Delivery</div>
         <div class="chip" data-cat="Voice / AI training" onclick="filterTasks('Voice / AI training', this)">Voice / AI training</div>
+        <div class="chip" data-cat="Thumbnail Design" onclick="filterTasks('Thumbnail Design', this)">Thumbnail Design</div>
+        <div class="chip" data-cat="Video Editing" onclick="filterTasks('Video Editing', this)">Video Editing</div>
       </div>
 
       <div class="task-grid" id="taskGrid">
@@ -1143,6 +1197,8 @@
               <option>Content</option>
               <option>Delivery</option>
               <option>Voice / AI training</option>
+              <option>Thumbnail Design</option>
+              <option>Video Editing</option>
             </select>
           </div>
           <div class="field">
@@ -1186,6 +1242,79 @@
         <div style="text-align:center;padding:50px 20px;color:var(--muted);">
           <div style="font-family:'Fraunces';font-size:17px;color:var(--text);margin-bottom:8px;">No posted tasks yet</div>
           <div style="font-size:13px;">Post a task in <b>Poster mode</b> to see it and its submissions here.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIDEO MARKET -->
+    <section class="tab-panel" id="videomarket">
+      <div class="topbar">
+        <div>
+          <h1>Video Market</h1>
+          <div class="sub">License stock footage, or book an editor's turnaround package</div>
+        </div>
+      </div>
+
+      <div class="filters" id="videoFilters">
+        <div class="chip active" data-vcat="All" onclick="filterListings('All', this)">All</div>
+        <div class="chip" data-vcat="Stock Footage" onclick="filterListings('Stock Footage', this)">Stock Footage</div>
+        <div class="chip" data-vcat="Editor Package" onclick="filterListings('Editor Package', this)">Editor Packages</div>
+      </div>
+
+      <div class="video-grid" id="videoGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--muted);">
+          <div style="font-family:'Fraunces';font-size:17px;color:var(--text);margin-bottom:8px;">Nothing listed yet</div>
+          <div style="font-size:13px;">Be the first to list stock footage or an editing package below.</div>
+        </div>
+      </div>
+
+      <div class="section-head"><h2>List something for sale</h2></div>
+      <div class="form-card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-listtype="footage" onclick="switchListingType('footage', this)">Stock Footage</button>
+          <button class="auth-tab" data-listtype="editor_package" onclick="switchListingType('editor_package', this)">Editor Package</button>
+        </div>
+        <div class="field">
+          <label>Title</label>
+          <input type="text" id="listTitle" placeholder="e.g. Drone shots of Mumbai skyline, 4K">
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <textarea id="listDescription" placeholder="What's included, resolution, duration, turnaround time, etc."></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Price (₹)</label>
+            <input type="number" id="listPrice" placeholder="500">
+          </div>
+          <div class="field">
+            <label>License</label>
+            <select id="listLicense" onchange="toggleRentalDays()">
+              <option value="single_use">Single use</option>
+              <option value="unlimited">Unlimited use</option>
+              <option value="time_limited">Time-limited rental</option>
+            </select>
+          </div>
+        </div>
+        <div class="field" id="rentalDaysField" style="display:none">
+          <label>Rental length (days)</label>
+          <input type="number" id="listRentalDays" placeholder="7">
+        </div>
+        <div class="field">
+          <label>Preview image/thumbnail URL</label>
+          <input type="text" id="listPreviewUrl" placeholder="https://... (shown to browsers before purchase)">
+        </div>
+        <div class="field">
+          <label>File / delivery link</label>
+          <input type="text" id="listFileUrl" placeholder="https://... (only revealed to the buyer after payment)">
+        </div>
+        <button class="btn block" onclick="submitListing()" id="submitListingBtn">List for sale</button>
+      </div>
+
+      <div class="section-head"><h2>My library (purchased)</h2></div>
+      <div id="myLibraryList">
+        <div style="text-align:center;padding:30px 20px;color:var(--muted);font-size:13px;">
+          Nothing purchased yet — buy a listing above to see it here.
         </div>
       </div>
     </section>
@@ -1662,6 +1791,169 @@
   }
 
   // ===================== My Tasks (proof review / approve / reject) =====================
+  // ===================== Video Market =====================
+  let listingType = 'footage';
+
+  async function loadListingsFromBackend(){
+    const grid = document.getElementById('videoGrid');
+    try{
+      const res = await fetch(`${API_BASE}/listings`);
+      if(!res.ok) return;
+      const listings = await res.json();
+      if(listings.length === 0) return; // keep empty-state placeholder
+
+      grid.innerHTML = listings.map(l => {
+        const price = Math.round(l.price_paise/100).toLocaleString('en-IN');
+        const licenseLabel = l.license_type === 'unlimited' ? 'Unlimited' :
+                              l.license_type === 'time_limited' ? (l.rental_days + '-day rental') : 'Single use';
+        const thumb = l.preview_url
+          ? `<img src="${l.preview_url}" alt="">`
+          : `<div class="play-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>`;
+        return `
+          <div class="video-card" data-vcat="${l.category}">
+            <div class="video-thumb">
+              ${thumb}
+              <span class="license-tag">${licenseLabel}</span>
+            </div>
+            <div class="video-card-body">
+              <h3>${l.title}</h3>
+              <p>${l.description || ''}</p>
+              <div class="video-card-foot">
+                <span class="video-seller">${l.category} · ${l.seller_name}</span>
+                <span class="video-price">₹${price}</span>
+              </div>
+              <button class="btn block" onclick="buyListing('${l.id}', '${l.title.replace(/'/g,"\\'")}', ${l.price_paise})">Buy / License</button>
+            </div>
+          </div>`;
+      }).join('');
+    } catch(e){ /* backend unreachable — keep empty state */ }
+    loadMyLibrary();
+  }
+
+  function filterListings(cat, chipEl){
+    document.querySelectorAll('#videoFilters .chip').forEach(c => c.classList.remove('active'));
+    chipEl.classList.add('active');
+    document.querySelectorAll('#videoGrid .video-card').forEach(card => {
+      const c = card.getAttribute('data-vcat');
+      card.style.display = (cat === 'All' || c === cat) ? '' : 'none';
+    });
+  }
+
+  function switchListingType(type, tabEl){
+    listingType = type;
+    tabEl.closest('.form-card').querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+  }
+
+  function toggleRentalDays(){
+    const isRental = document.getElementById('listLicense').value === 'time_limited';
+    document.getElementById('rentalDaysField').style.display = isRental ? 'block' : 'none';
+  }
+
+  async function submitListing(){
+    if(!authToken){ showToast('Log in first to list something for sale.'); return; }
+    const title = document.getElementById('listTitle').value.trim();
+    const description = document.getElementById('listDescription').value.trim();
+    const price = parseInt(document.getElementById('listPrice').value, 10) || 0;
+    const licenseType = document.getElementById('listLicense').value;
+    const rentalDays = parseInt(document.getElementById('listRentalDays').value, 10) || null;
+    const previewUrl = document.getElementById('listPreviewUrl').value.trim();
+    const fileUrl = document.getElementById('listFileUrl').value.trim();
+    const category = listingType === 'footage' ? 'Stock Footage' : 'Editor Package';
+
+    if(!title || price <= 0){ showToast('Add a title and a price above ₹0.'); return; }
+    if(licenseType === 'time_limited' && !rentalDays){ showToast('Enter how many days the rental lasts.'); return; }
+
+    const btn = document.getElementById('submitListingBtn');
+    btn.textContent = 'Listing…'; btn.disabled = true;
+    try{
+      const res = await fetch(`${API_BASE}/listings`, {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ type: listingType, title, description, category, pricePaise: price*100, licenseType, rentalDays, previewUrl, fileUrl })
+      });
+      const data = await res.json();
+      if(!res.ok){ showToast(data.error || 'Could not list.'); }
+      else {
+        showToast('Listed — now visible in the marketplace.');
+        document.getElementById('listTitle').value = '';
+        document.getElementById('listDescription').value = '';
+        document.getElementById('listPrice').value = '';
+        document.getElementById('listPreviewUrl').value = '';
+        document.getElementById('listFileUrl').value = '';
+        loadListingsFromBackend();
+      }
+    } catch(e){ showToast('Backend unreachable.'); }
+    btn.textContent = 'List for sale'; btn.disabled = false;
+  }
+
+  async function buyListing(listingId, title, pricePaise){
+    if(!authToken){ showToast('Log in first to buy or license this.'); return; }
+    try{
+      const orderRes = await fetch(`${API_BASE}/listings/${listingId}/purchase-order`, {
+        method: 'POST', headers: authHeaders()
+      });
+      const order = await orderRes.json();
+      if(!orderRes.ok){ showToast(order.error || 'Could not start purchase.'); return; }
+
+      const rzp = new Razorpay({
+        key: order.razorpayKeyId,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'OnlineDaftar Video Market',
+        description: title,
+        order_id: order.orderId,
+        theme: { color: '#CFA645' },
+        handler: async function(response){
+          const verifyRes = await fetch(`${API_BASE}/listings/verify`, {
+            method: 'POST', headers: authHeaders(),
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            })
+          });
+          if(verifyRes.ok){
+            showToast(`Purchased "${title}" — check My Library below.`);
+            loadMyLibrary();
+          } else {
+            showToast('Payment succeeded but verification failed — check backend logs.');
+          }
+        },
+        modal: { ondismiss: function(){ showToast('Purchase cancelled.'); } }
+      });
+      rzp.on('payment.failed', function(resp){ showToast('Payment failed: ' + resp.error.description); });
+      rzp.open();
+    } catch(e){ showToast('Backend unreachable.'); }
+  }
+
+  async function loadMyLibrary(){
+    if(!authToken) return;
+    try{
+      const res = await fetch(`${API_BASE}/listings/mine/library`, { headers: authHeaders() });
+      if(!res.ok) return;
+      const items = await res.json();
+      const container = document.getElementById('myLibraryList');
+      if(items.length === 0) return;
+
+      container.innerHTML = items.map(item => {
+        const thumb = item.preview_url ? `<img src="${item.preview_url}" alt="">` :
+          `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>`;
+        const expiryNote = item.expires_at
+          ? (item.active ? `Rental active until ${new Date(item.expires_at).toLocaleDateString('en-IN')}` : 'Rental expired')
+          : 'Yours to keep';
+        return `
+          <div class="library-item">
+            <div class="library-thumb">${thumb}</div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:13.5px;">${item.title}</div>
+              <div style="font-size:11.5px;color:var(--muted-2);">${item.category} · ${expiryNote}</div>
+            </div>
+            ${item.active ? `<a href="${item.file_url || '#'}" target="_blank" class="btn">Open</a>` : `<span class="stamp review">EXPIRED</span>`}
+          </div>`;
+      }).join('');
+    } catch(e){ /* backend unreachable — keep empty state */ }
+  }
+
   async function loadPostedTasksFromBackend(){
     const list = document.getElementById('myTasksList');
     if(!authToken) return; // keep the default empty-state placeholder

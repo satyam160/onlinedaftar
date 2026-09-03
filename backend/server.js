@@ -9,6 +9,7 @@ const paymentRoutes = require('./routes/payments');
 const walletRoutes = require('./routes/wallet');
 const notificationRoutes = require('./routes/notifications');
 const bankAccountRoutes = require('./routes/bankaccount');
+const listingRoutes = require('./routes/listings');
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use('/api/tasks', express.json(), taskRoutes);
 app.use('/api/wallet', express.json(), walletRoutes);
 app.use('/api/notifications', express.json(), notificationRoutes);
 app.use('/api/bank-account', express.json(), bankAccountRoutes);
+app.use('/api/listings', listingRoutes); // listings.js applies express.json() per-route
 app.use('/api/payments', paymentRoutes); // payments.js applies json/raw per-route
 
 app.get('/health', (req, res) => res.json({ ok: true }));
