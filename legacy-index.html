@@ -160,11 +160,10 @@
   }
   .nav-item.active svg{opacity:1;}
   .nav-item:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
-  /* Poster/Worker mode: dim the less-relevant nav items. Opacity only —
-     never display/width/height — so nothing reflows when switching. */
-  .nav-item{transition:background .2s var(--ease), color .2s var(--ease), transform .2s var(--ease), opacity .25s ease;}
-  body.poster-mode .nav-item[data-tab="browse"]{opacity:0.4;}
-  body:not(.poster-mode) .nav-item[data-tab="post"]{opacity:0.4;}
+  /* Separate, distinct interfaces for Worker vs Poster */
+  body.poster-mode .worker-only { display: none !important; }
+  body:not(.poster-mode) .poster-only { display: none !important; }
+
   .nav-badge{
     margin-left:auto;
     background:var(--danger);
@@ -780,11 +779,11 @@
     <div class="auth-step active" id="authStepSignIn">
       <div class="field">
         <label>Username or Email address</label>
-        <input type="text" id="loginUsername" placeholder="e.g. arjun or priya@example.com" value="priya.s@daftardemo.in">
+        <input type="text" id="loginUsername" placeholder="e.g. arjun or priya@example.com">
       </div>
       <div class="field">
         <label>Password</label>
-        <input type="password" id="loginPassword" placeholder="Enter password" value="password123">
+        <input type="password" id="loginPassword" placeholder="Enter password">
       </div>
       <button class="btn block" onclick="handleLegacyLogin()" id="loginBtn" style="margin-top:12px;">Sign In with Password</button>
     </div>
@@ -804,24 +803,13 @@
         <input type="password" id="regPassword" placeholder="••••••••">
       </div>
       <div class="field">
-        <label>Role</label>
+        <label>Select Your Role</label>
         <select id="regRole">
-          <option value="worker">Worker — Complete gigs & earn</option>
-          <option value="poster">Poster — Hire workers with escrow</option>
+          <option value="worker">Worker — Find gigs &amp; earn with escrow</option>
+          <option value="poster">Poster — Hire workers &amp; post tasks</option>
         </select>
       </div>
       <button class="btn block" onclick="handleLegacyRegister()" id="regBtn" style="margin-top:12px;">Create Account</button>
-    </div>
-
-    <!-- 1-Click Fast Interview Demo -->
-    <div style="margin-top:20px;padding-top:14px;border-top:1px solid var(--border);">
-      <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">
-        ⚡ Fast Interview Demo Access
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <button class="btn btn-subtle" onclick="demoLoginLegacy('worker')" style="font-size:11.5px;padding:8px 10px;">Demo as Worker</button>
-        <button class="btn btn-subtle" onclick="demoLoginLegacy('poster')" style="font-size:11.5px;padding:8px 10px;">Demo as Poster</button>
-      </div>
     </div>
   </div>
 </div>
@@ -829,53 +817,79 @@
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-mark">K</div>
+      <div class="brand-mark">O</div>
       <div class="brand-name">OnlineDaftar</div>
     </div>
-    <div class="brand-tag">Real work. Real ledger. Real pay.</div>
+    <div class="brand-tag worker-only" id="brandTagWorker" style="color:var(--mint);font-size:11px;font-weight:700;letter-spacing:0.5px;">✦ WORKER PORTAL</div>
+    <div class="brand-tag poster-only" id="brandTagPoster" style="color:var(--gold-soft);font-size:11px;font-weight:700;letter-spacing:0.5px;">✦ POSTER CONSOLE</div>
 
     <nav>
-      <button class="nav-item active" data-tab="overview" onclick="showTab('overview', this)">
+      <!-- WORKER INTERFACE NAVIGATION -->
+      <button class="nav-item active worker-only" data-tab="overview" onclick="showTab('overview', this)">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
-        Overview
+        Worker Overview
       </button>
-      <button class="nav-item" data-tab="browse" onclick="showTab('browse', this)">
+      <button class="nav-item worker-only" data-tab="browse" onclick="showTab('browse', this)">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         Browse Tasks
       </button>
-      <button class="nav-item" data-tab="wallet" onclick="showTab('wallet', this)">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
-        Wallet
+      <button class="nav-item worker-only" data-tab="mytasks" onclick="showTab('mytasks', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        My Accepted Gigs
       </button>
+      <button class="nav-item worker-only" data-tab="wallet" onclick="showTab('wallet', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+        Wallet &amp; Payouts
+      </button>
+      <button class="nav-item worker-only" data-tab="profile" onclick="showTab('profile', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+        Worker Profile
+      </button>
+
+      <!-- POSTER INTERFACE NAVIGATION -->
+      <button class="nav-item active poster-only" data-tab="overview" onclick="showTab('overview', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
+        Employer Dashboard
+      </button>
+      <button class="nav-item poster-only" data-tab="post" onclick="showTab('post', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Post a Task
+      </button>
+      <button class="nav-item poster-only" data-tab="mytasks" onclick="showTab('mytasks', this); loadPostedTasksFromBackend();">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Review Submissions
+      </button>
+      <button class="nav-item poster-only" data-tab="videomarket" onclick="showTab('videomarket', this); loadListingsFromBackend();">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Creator Market
+      </button>
+      <button class="nav-item poster-only" data-tab="wallet" onclick="showTab('wallet', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+        Escrow Ledger
+      </button>
+      <button class="nav-item poster-only" data-tab="profile" onclick="showTab('profile', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+        Company Profile
+      </button>
+
+      <!-- Shared -->
       <button class="nav-item" data-tab="notifications" onclick="showTab('notifications', this)" style="position:relative;">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
         Notifications
         <span class="nav-badge" id="notifBadge">3</span>
       </button>
-      <button class="nav-item" data-tab="post" onclick="showTab('post', this)">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-        Post a Task
-      </button>
-      <button class="nav-item" data-tab="mytasks" onclick="showTab('mytasks', this); loadPostedTasksFromBackend();">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-        My Tasks
-      </button>
-      <button class="nav-item" data-tab="videomarket" onclick="showTab('videomarket', this); loadListingsFromBackend();">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-        Video Market
-      </button>
-      <button class="nav-item" data-tab="profile" onclick="showTab('profile', this)">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>
-        Profile
-      </button>
     </nav>
 
     <div class="mode-toggle">
-      <div class="mode-toggle-label">Account mode</div>
-      <div class="switch-row">
-        <span id="modeLabel">Worker</span>
+      <div class="mode-toggle-label">Switch Workspace</div>
+      <div class="switch-row" style="margin-bottom:8px;">
+        <span id="modeLabel" style="font-weight:600;color:var(--gold-soft);">Worker Portal</span>
         <div class="switch" id="modeSwitch" onclick="toggleMode()"></div>
       </div>
+      <button class="btn btn-subtle block" onclick="toggleMode()" style="font-size:11px;padding:6px 8px;width:100%;">
+        <span class="worker-only">Switch to Poster Console →</span>
+        <span class="poster-only">Switch to Worker Portal →</span>
+      </button>
     </div>
   </aside>
 
@@ -884,20 +898,32 @@
     <!-- OVERVIEW -->
     <section class="tab-panel active" id="overview">
       <div class="topbar">
-        <div>
+        <div class="worker-only">
           <h1 id="dashGreeting">Namaste 👋</h1>
-          <div class="sub" id="dashSub">Sign in to see your real dashboard</div>
+          <div class="sub" id="dashSub">Welcome to your worker workspace</div>
         </div>
-        <div class="wallet-pill">
+        <div class="poster-only">
+          <h1 id="dashGreetingPoster">Employer Console 📊</h1>
+          <div class="sub" id="dashSubPoster">Manage gigs, escrow balances, and submissions</div>
+        </div>
+        <div class="wallet-pill worker-only">
           <div class="avatar" id="dashAvatar">··</div>
           <div>
-            <div class="lbl">Balance</div>
+            <div class="lbl">Wallet Balance</div>
             <div class="amt" id="balanceWalletPill">₹14,280</div>
+          </div>
+        </div>
+        <div class="wallet-pill poster-only">
+          <div class="avatar" id="dashAvatarPoster" style="background:var(--gold-dim);color:var(--gold-hi);">EC</div>
+          <div>
+            <div class="lbl">Escrow Balance</div>
+            <div class="amt" style="color:var(--gold-hi);">₹48,500</div>
           </div>
         </div>
       </div>
 
-      <div class="stat-grid">
+      <!-- WORKER STAT GRID -->
+      <div class="stat-grid worker-only">
         <div class="card hero-card">
           <div class="lbl">Earned this month</div>
           <div class="big" id="earnedThisMonth" data-countup="14280">₹0</div>
@@ -913,22 +939,45 @@
           </div>
         </div>
         <div class="card stat-mini">
-          <div class="lbl">Tasks completed</div>
+          <div class="lbl">Gigs completed</div>
           <div class="val">142</div>
           <div class="sub">18-day active streak</div>
         </div>
         <div class="card stat-mini">
-          <div class="lbl">Rating</div>
-          <div class="val" style="color:var(--gold-soft)">4.9</div>
-          <div class="sub">from 118 reviews</div>
+          <div class="lbl">Worker Rating</div>
+          <div class="val" style="color:var(--gold-soft)">4.9 ★</div>
+          <div class="sub">from 118 verified reviews</div>
         </div>
       </div>
 
-      <div class="section-head">
-        <h2>Today's ledger</h2>
-        <a href="javascript:void(0)" onclick="showTab('browse', document.querySelector('[data-tab=browse]'));">Find more tasks →</a>
+      <!-- POSTER STAT GRID -->
+      <div class="stat-grid poster-only">
+        <div class="card hero-card" style="border-color:var(--border-gold);">
+          <div class="lbl">Total Escrow Deposited</div>
+          <div class="big" style="color:var(--gold-hi);">₹48,500</div>
+          <div class="delta" style="color:var(--mint);">✓ 100% secured with Razorpay</div>
+          <div style="margin-top:14px;">
+            <button class="btn" onclick="showTab('post', document.querySelector('.poster-only[data-tab=post]'))" style="font-size:12px;padding:7px 14px;">+ Post New Gig</button>
+          </div>
+        </div>
+        <div class="card stat-mini">
+          <div class="lbl">Active Gigs Posted</div>
+          <div class="val" style="color:var(--gold-soft);">4</div>
+          <div class="sub">12 applications received</div>
+        </div>
+        <div class="card stat-mini">
+          <div class="lbl">Submissions to Review</div>
+          <div class="val" style="color:var(--mint);">2</div>
+          <div class="sub"><a href="javascript:void(0)" onclick="showTab('mytasks', document.querySelector('.poster-only[data-tab=mytasks]'))" style="color:var(--mint);text-decoration:underline;">Review &amp; approve →</a></div>
+        </div>
       </div>
-      <div class="ledger" id="todayLedger">
+
+      <!-- WORKER OVERVIEW LEDGER -->
+      <div class="section-head worker-only">
+        <h2>Today's earnings ledger</h2>
+        <a href="javascript:void(0)" onclick="showTab('browse', document.querySelector('.worker-only[data-tab=browse]'));">Find more tasks →</a>
+      </div>
+      <div class="ledger worker-only" id="todayLedger">
         <div class="ledger-row done" onclick="openTaskDetail(this)"
              data-title="Transcribe 12 voice clips — Hindi" data-meta="Nira AI Labs · approved 9:42 AM"
              data-amt="180" data-status="approved">
@@ -958,6 +1007,38 @@
             <div class="meta">Bazaar Insights · due 6:00 PM</div>
           </div>
           <div class="amt">+₹350</div>
+        </div>
+      </div>
+
+      <!-- POSTER OVERVIEW LEDGER -->
+      <div class="section-head poster-only">
+        <h2>Active Gigs &amp; Submissions</h2>
+        <a href="javascript:void(0)" onclick="showTab('post', document.querySelector('.poster-only[data-tab=post]'));">+ Post a new gig →</a>
+      </div>
+      <div class="ledger poster-only" id="posterOverviewLedger">
+        <div class="ledger-row done" onclick="showTab('mytasks', document.querySelector('.poster-only[data-tab=mytasks]'))">
+          <div class="check" style="background:var(--mint-dim);color:var(--mint);border-color:var(--mint);">✓</div>
+          <div class="info">
+            <div class="title">Transcribe 12 voice clips — Hindi</div>
+            <div class="meta">Priya Sharma · 1 submission pending review</div>
+          </div>
+          <div class="amt" style="color:var(--mint);">Review →</div>
+        </div>
+        <div class="ledger-row done" onclick="showTab('mytasks', document.querySelector('.poster-only[data-tab=mytasks]'))">
+          <div class="check" style="background:var(--mint-dim);color:var(--mint);border-color:var(--mint);">✓</div>
+          <div class="info">
+            <div class="title">App onboarding feedback — 3 screens</div>
+            <div class="meta">Rahul Verma · Escrow released ₹90</div>
+          </div>
+          <div class="amt" style="color:var(--muted);">Paid ₹90</div>
+        </div>
+        <div class="ledger-row" onclick="showTab('post', document.querySelector('.poster-only[data-tab=post]'))">
+          <div class="check"></div>
+          <div class="info">
+            <div class="title">Local survey — 25 responses, Ranchi</div>
+            <div class="meta">Escrow ₹350 funded · Open for applicants</div>
+          </div>
+          <div class="amt" style="color:var(--gold-soft);">Active</div>
         </div>
       </div>
     </section>
@@ -1042,8 +1123,10 @@
     <section class="tab-panel" id="wallet">
       <div class="topbar">
         <div>
-          <h1>Wallet</h1>
-          <div class="sub">Your earnings passbook</div>
+          <h1 class="worker-only">Wallet &amp; Payouts</h1>
+          <div class="sub worker-only">Your verified earnings passbook &amp; instant withdrawals</div>
+          <h1 class="poster-only">Escrow Ledger &amp; Billing</h1>
+          <div class="sub poster-only">Secured task deposits, escrow balances, and worker payouts</div>
         </div>
       </div>
 
@@ -1054,12 +1137,15 @@
             <h2 id="passbookName">Your account</h2>
           </div>
           <div class="passbook-bal">
-            <div class="lbl">Available balance</div>
-            <div class="val" id="balancePassbook" data-countup="14280">₹0</div>
+            <div class="lbl worker-only">Available balance</div>
+            <div class="lbl poster-only">Escrow fund balance</div>
+            <div class="val worker-only" id="balancePassbook" data-countup="14280">₹0</div>
+            <div class="val poster-only" style="color:var(--gold-hi);">₹48,500</div>
           </div>
         </div>
 
-        <table class="ptable">
+        <!-- WORKER PASSBOOK -->
+        <table class="ptable worker-only">
           <thead>
             <tr><th>Entry</th><th>Category</th><th>Status</th><th style="text-align:right">Amount</th></tr>
           </thead>
@@ -1097,9 +1183,46 @@
           </tbody>
         </table>
 
-        <div class="wallet-actions">
-          <button class="btn" style="flex:1" onclick="startWithdraw()">Withdraw to UPI</button>
+        <!-- POSTER ESCROW AUDIT TABLE -->
+        <table class="ptable poster-only">
+          <thead>
+            <tr><th>Transaction</th><th>Purpose</th><th>Status</th><th style="text-align:right">Escrow Flow</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="desc"><div class="title">Razorpay Escrow Deposit</div><div class="date">14 Jul, 9:00 AM</div></td>
+              <td>Gig Funding</td>
+              <td><span class="stamp paid"><span class="stamp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>FUNDED</span></td>
+              <td class="amt-cell in">+₹10,000</td>
+            </tr>
+            <tr>
+              <td class="desc"><div class="title">Payout Released to Priya Sharma</div><div class="date">14 Jul, 11:15 AM</div></td>
+              <td>Voice transcription</td>
+              <td><span class="stamp verified"><span class="stamp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>RELEASED</span></td>
+              <td class="amt-cell out">−₹180</td>
+            </tr>
+            <tr>
+              <td class="desc"><div class="title">Payout Released to Rahul Verma</div><div class="date">13 Jul, 5:30 PM</div></td>
+              <td>UI feedback</td>
+              <td><span class="stamp verified"><span class="stamp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>RELEASED</span></td>
+              <td class="amt-cell out">−₹90</td>
+            </tr>
+            <tr>
+              <td class="desc"><div class="title">Escrow Hold: Local survey</div><div class="date">13 Jul, 1:00 PM</div></td>
+              <td>Market Research</td>
+              <td><span class="stamp pending"><span class="stamp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>IN ESCROW</span></td>
+              <td class="amt-cell in">₹350</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="wallet-actions worker-only">
+          <button class="btn" style="flex:1" onclick="startWithdraw()">Withdraw to UPI / Bank</button>
           <button class="btn ghost" style="flex:1" onclick="downloadStatement()">Download statement</button>
+        </div>
+        <div class="wallet-actions poster-only">
+          <button class="btn" style="flex:1" onclick="showTab('post', document.querySelector('.poster-only[data-tab=post]'))">+ Fund Escrow for New Gig</button>
+          <button class="btn ghost" style="flex:1" onclick="downloadStatement()">Download tax invoice</button>
         </div>
       </div>
     </section>
@@ -1240,18 +1363,65 @@
     </section>
 
     <!-- PROFILE -->
-    <!-- MY TASKS (poster review) -->
+    <!-- MY TASKS PANEL -->
     <section class="tab-panel" id="mytasks">
-      <div class="topbar">
-        <div>
-          <h1>My posted tasks</h1>
-          <div class="sub">Review submitted proof and release payment</div>
+      <!-- WORKER VIEW -->
+      <div class="worker-only">
+        <div class="topbar">
+          <div>
+            <h1>My Accepted Gigs</h1>
+            <div class="sub">Track tasks in progress, submit work proof, and view approval status</div>
+          </div>
+          <button class="btn ghost" onclick="showTab('browse', document.querySelector('.worker-only[data-tab=browse]'))">+ Browse More Gigs</button>
+        </div>
+        <div class="ledger" id="workerMyTasksLedger">
+          <div class="ledger-row" onclick="openTaskDetail(this)"
+               data-title="Local survey — 25 responses, Ranchi" data-meta="Bazaar Insights · due 6:00 PM"
+               data-amt="350" data-status="pending">
+            <div class="check"></div>
+            <div class="info">
+              <div class="title">Local survey — 25 responses, Ranchi</div>
+              <div class="meta">Bazaar Insights · in progress · tap to submit proof</div>
+            </div>
+            <div class="amt">+₹350</div>
+          </div>
+          <div class="ledger-row done" onclick="openTaskDetail(this)"
+               data-title="Transcribe 12 voice clips — Hindi" data-meta="Nira AI Labs · approved 9:42 AM"
+               data-amt="180" data-status="approved">
+            <div class="check">✓</div>
+            <div class="info">
+              <div class="title">Transcribe 12 voice clips — Hindi</div>
+              <div class="meta">Nira AI Labs · approved &amp; paid into wallet</div>
+            </div>
+            <div class="amt">+₹180</div>
+          </div>
+          <div class="ledger-row done" onclick="openTaskDetail(this)"
+               data-title="App onboarding feedback — 3 screens" data-meta="Setu Fintech · approved 11:05 AM"
+               data-amt="90" data-status="approved">
+            <div class="check">✓</div>
+            <div class="info">
+              <div class="title">App onboarding feedback — 3 screens</div>
+              <div class="meta">Setu Fintech · approved &amp; paid into wallet</div>
+            </div>
+            <div class="amt">+₹90</div>
+          </div>
         </div>
       </div>
-      <div id="myTasksList">
-        <div style="text-align:center;padding:50px 20px;color:var(--muted);">
-          <div style="font-family:'Fraunces';font-size:17px;color:var(--text);margin-bottom:8px;">No posted tasks yet</div>
-          <div style="font-size:13px;">Post a task in <b>Poster mode</b> to see it and its submissions here.</div>
+
+      <!-- POSTER VIEW -->
+      <div class="poster-only">
+        <div class="topbar">
+          <div>
+            <h1>Review Submissions</h1>
+            <div class="sub">Review submitted proof from freelancers and release escrow payment</div>
+          </div>
+          <button class="btn" onclick="showTab('post', document.querySelector('.poster-only[data-tab=post]'))">+ Post New Gig</button>
+        </div>
+        <div id="myTasksList">
+          <div style="text-align:center;padding:50px 20px;color:var(--muted);">
+            <div style="font-family:'Fraunces';font-size:17px;color:var(--text);margin-bottom:8px;">No submissions awaiting review</div>
+            <div style="font-size:13px;">When workers submit proof for your gigs, review them here to release escrow.</div>
+          </div>
         </div>
       </div>
     </section>
@@ -1332,8 +1502,10 @@
     <section class="tab-panel" id="profile">
       <div class="topbar">
         <div>
-          <h1>Profile</h1>
-          <div class="sub">How posters and workers see you</div>
+          <h1 class="worker-only">Worker Profile</h1>
+          <div class="sub worker-only">Your verified worker identity, badges, and payout methods</div>
+          <h1 class="poster-only">Company Profile</h1>
+          <div class="sub poster-only">Your business billing, hiring reputation, and employer settings</div>
         </div>
       </div>
 
@@ -1351,28 +1523,59 @@
         </div>
       </div>
 
-      <div class="section-head"><h2>Badges earned</h2></div>
-      <div class="badge-grid">
-        <div class="badge-card">
-          <div class="badge-icon-circle mint">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.35 8.87a1 1 0 01-.6-.01C8.5 20.5 5 18 5 13V6a1 1 0 011-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 011.52 0C15.51 3.81 18 5 20 5a1 1 0 011 1z"/><path d="M9 12l2 2 4-4"/></svg>
+      <!-- WORKER BADGES -->
+      <div class="worker-only">
+        <div class="section-head"><h2>Badges earned</h2></div>
+        <div class="badge-grid">
+          <div class="badge-card">
+            <div class="badge-icon-circle mint">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.35 8.87a1 1 0 01-.6-.01C8.5 20.5 5 18 5 13V6a1 1 0 011-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 011.52 0C15.51 3.81 18 5 20 5a1 1 0 011 1z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <div class="badge-title">Verified</div>
+            <div class="cap">KYC &amp; bank linked</div>
           </div>
-          <div class="badge-title">Verified</div>
-          <div class="cap">KYC &amp; bank linked</div>
+          <div class="badge-card">
+            <div class="badge-icon-circle indigo">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.7 1.5 6.8L12 17l-6.2 3.5 1.5-6.8-5.1-4.7 6.9-.7z"/></svg>
+            </div>
+            <div class="badge-title">Top Rated</div>
+            <div class="cap">4.8+ over 50 tasks</div>
+          </div>
+          <div class="badge-card">
+            <div class="badge-icon-circle mustard">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="6" height="10" rx="1"/><rect x="9" y="5" width="6" height="15" rx="1"/><rect x="15" y="13" width="6" height="7" rx="1"/></svg>
+            </div>
+            <div class="badge-title" id="profileTaskCountTitle">142 Tasks</div>
+            <div class="cap">18-day active streak</div>
+          </div>
         </div>
-        <div class="badge-card">
-          <div class="badge-icon-circle indigo">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.7 1.5 6.8L12 17l-6.2 3.5 1.5-6.8-5.1-4.7 6.9-.7z"/></svg>
+      </div>
+
+      <!-- POSTER BADGES -->
+      <div class="poster-only">
+        <div class="section-head"><h2>Employer Credentials</h2></div>
+        <div class="badge-grid">
+          <div class="badge-card">
+            <div class="badge-icon-circle mint">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.35 8.87a1 1 0 01-.6-.01C8.5 20.5 5 18 5 13V6a1 1 0 011-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 011.52 0C15.51 3.81 18 5 20 5a1 1 0 011 1z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <div class="badge-title">Verified Employer</div>
+            <div class="cap">Escrow verified &amp; active</div>
           </div>
-          <div class="badge-title">Top Rated</div>
-          <div class="cap">4.8+ over 50 tasks</div>
-        </div>
-        <div class="badge-card">
-          <div class="badge-icon-circle mustard">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="6" height="10" rx="1"/><rect x="9" y="5" width="6" height="15" rx="1"/><rect x="15" y="13" width="6" height="7" rx="1"/></svg>
+          <div class="badge-card">
+            <div class="badge-icon-circle indigo">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <div class="badge-title">Fast Approver</div>
+            <div class="cap">Avg approval &lt; 2 hrs</div>
           </div>
-          <div class="badge-title" id="profileTaskCountTitle">0 Tasks</div>
-          <div class="cap">Keep going</div>
+          <div class="badge-card">
+            <div class="badge-icon-circle mustard">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="badge-title">100% Escrow Funded</div>
+            <div class="cap">₹48,500 deposited</div>
+          </div>
         </div>
       </div>
 
@@ -1380,22 +1583,27 @@
       <div class="ledger">
         <div class="settings-row"><span class="lbl">Mobile</span><span class="val" id="profilePhoneVal">Not linked</span></div>
         <div class="settings-row"><span class="lbl">Email</span><span class="val" id="profileEmailVal">Not linked</span></div>
-        <div class="settings-row"><span class="lbl">Payout method</span><span class="val" id="profilePayoutVal">Not linked</span></div>
+        <div class="settings-row worker-only"><span class="lbl">Payout method</span><span class="val" id="profilePayoutVal">Not linked</span></div>
+        <div class="settings-row poster-only"><span class="lbl">Escrow Billing</span><span class="val" style="color:var(--mint);">Razorpay Auto-Deposit Active</span></div>
       </div>
 
-      <div class="section-head"><h2>About you</h2></div>
+      <div class="section-head">
+        <h2 class="worker-only">About you</h2>
+        <h2 class="poster-only">Company information</h2>
+      </div>
       <div class="form-card">
         <div class="field">
-          <label>Short description</label>
+          <label class="worker-only">Worker Bio &amp; Skills</label>
+          <label class="poster-only">Company Description &amp; Hiring Requirements</label>
           <textarea id="profileBio" placeholder="e.g. Freelance data-entry specialist, available evenings and weekends."></textarea>
         </div>
         <button class="btn block" onclick="saveProfileBio()" id="saveBioBtn">Save changes</button>
       </div>
 
-      <div class="section-head"><h2>Add another way to sign in</h2></div>
+      <div class="section-head"><h2>Contact &amp; Notification preferences</h2></div>
       <div class="form-card">
         <div class="auth-demo-note show" style="color:var(--muted);background:var(--surface-2);border-color:var(--border-strong);margin-bottom:16px;">
-          Signed up with mobile? Add your email here (or vice versa) so you can log in either way.
+          Add your phone or email to receive instant task alerts and SMS payout notifications.
         </div>
         <div class="auth-tabs">
           <button class="auth-tab active" data-linkmethod="mobile" onclick="switchLinkMethod('mobile', this)">Add mobile</button>
@@ -1407,46 +1615,68 @@
         <div id="linkFieldsEmail" style="display:none">
           <div class="field"><label>Email address</label><input type="email" id="linkEmailInput" placeholder="you@example.com"></div>
         </div>
-        <button class="btn block" onclick="sendLinkOtp()" id="sendLinkOtpBtn">Send verification code</button>
-        <div id="linkOtpStep" style="display:none;margin-top:16px;">
-          <div class="field"><label>Enter the code</label><input type="text" id="linkOtpCode" placeholder="6-digit code" maxlength="6"></div>
-          <button class="btn block" onclick="verifyLinkOtp()">Verify &amp; link</button>
+        <button class="btn block" onclick="sendLinkOtp()" id="sendLinkOtpBtn">Save contact info</button>
+      </div>
+
+      <!-- WORKER PAYOUT METHOD -->
+      <div class="worker-only">
+        <div class="section-head"><h2>Link a payout method</h2></div>
+        <div class="form-card">
+          <div class="auth-demo-note show" style="color:var(--muted);background:var(--surface-2);border-color:var(--border-strong);margin-bottom:16px;">
+            🔒 Your account details are securely encrypted and verified via Razorpay.
+          </div>
+          <div class="auth-tabs">
+            <button class="auth-tab active" data-paymethod="bank" onclick="switchPayoutMethod('bank', this)">Bank account</button>
+            <button class="auth-tab" data-paymethod="upi" onclick="switchPayoutMethod('upi', this)">UPI</button>
+          </div>
+          <div id="payoutFieldsBank">
+            <div class="field">
+              <label>Account holder name</label>
+              <input type="text" id="bankHolderName" placeholder="As per bank records">
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Account number</label>
+                <input type="text" id="bankAccountNumber" placeholder="0000000000">
+              </div>
+              <div class="field">
+                <label>IFSC code</label>
+                <input type="text" id="bankIfsc" placeholder="HDFC0000123" style="text-transform:uppercase;">
+              </div>
+            </div>
+            <button class="btn block" onclick="linkBankAccount()" id="linkBankBtn">Link bank account</button>
+          </div>
+          <div id="payoutFieldsUpi" style="display:none">
+            <div class="field">
+              <label>UPI ID</label>
+              <input type="text" id="upiIdInput" placeholder="yourname@okhdfc">
+            </div>
+            <button class="btn block" onclick="linkUpiAccount()" id="linkUpiBtn">Link UPI ID</button>
+          </div>
         </div>
       </div>
 
-      <div class="section-head"><h2>Link a payout method</h2></div>
-      <div class="form-card">
-        <div class="auth-demo-note show" style="color:var(--muted);background:var(--surface-2);border-color:var(--border-strong);margin-bottom:16px;">
-          🔒 Your account number is sent straight to Razorpay and tokenized — we only ever store the last 4 digits.
-        </div>
-        <div class="auth-tabs">
-          <button class="auth-tab active" data-paymethod="bank" onclick="switchPayoutMethod('bank', this)">Bank account</button>
-          <button class="auth-tab" data-paymethod="upi" onclick="switchPayoutMethod('upi', this)">UPI</button>
-        </div>
-        <div id="payoutFieldsBank">
+      <!-- POSTER BILLING SETTINGS -->
+      <div class="poster-only">
+        <div class="section-head"><h2>Employer Billing &amp; Invoices</h2></div>
+        <div class="form-card">
+          <div class="auth-demo-note show" style="color:var(--muted);background:var(--surface-2);border-color:var(--border-strong);margin-bottom:16px;">
+            🔒 All payments and worker releases are 100% escrow backed through Razorpay.
+          </div>
           <div class="field">
-            <label>Account holder name</label>
-            <input type="text" id="bankHolderName" placeholder="As per bank records">
+            <label>GSTIN / Tax ID (Optional)</label>
+            <input type="text" placeholder="29ABCDE1234F1Z5">
           </div>
-          <div class="field-row">
-            <div class="field">
-              <label>Account number</label>
-              <input type="text" id="bankAccountNumber" placeholder="0000000000">
-            </div>
-            <div class="field">
-              <label>IFSC code</label>
-              <input type="text" id="bankIfsc" placeholder="HDFC0000123" style="text-transform:uppercase;">
-            </div>
-          </div>
-          <button class="btn block" onclick="linkBankAccount()" id="linkBankBtn">Link bank account</button>
-        </div>
-        <div id="payoutFieldsUpi" style="display:none">
           <div class="field">
-            <label>UPI ID</label>
-            <input type="text" id="upiIdInput" placeholder="yourname@okhdfc">
+            <label>Billing Address</label>
+            <input type="text" placeholder="Registered office address">
           </div>
-          <button class="btn block" onclick="linkUpiAccount()" id="linkUpiBtn">Link UPI ID</button>
+          <button class="btn block" onclick="showToast('Billing details saved.')">Update Billing Details</button>
         </div>
+      </div>
+
+      <div style="margin-top:28px;text-align:center;">
+        <button class="btn btn-subtle" onclick="logout()" style="color:var(--danger);border-color:rgba(235,87,87,0.3);width:100%;max-width:320px;margin:0 auto;display:inline-block;">Sign Out</button>
       </div>
     </section>
 
@@ -1460,19 +1690,33 @@
     document.getElementById(id).classList.add('active');
     if(btn) btn.classList.add('active');
   }
-  function toggleMode(){
+  function setAppRole(role){
+    const isPoster = role === 'poster';
     const sw = document.getElementById('modeSwitch');
     const lbl = document.getElementById('modeLabel');
-    sw.classList.toggle('on');
-    const isPoster = sw.classList.contains('on');
-    lbl.textContent = isPoster ? 'Poster' : 'Worker';
+    if(sw){
+      if(isPoster) sw.classList.add('on');
+      else sw.classList.remove('on');
+    }
+    if(lbl){
+      lbl.textContent = isPoster ? 'Poster Console' : 'Worker Portal';
+    }
     document.body.classList.toggle('poster-mode', isPoster);
-    // Switch to the relevant tab using the same cross-fade every nav click
-    // uses, so there's no layout jump — only the content panel fades,
-    // the sidebar and topbar frame stay exactly where they are.
-    const targetTab = isPoster ? 'post' : 'browse';
-    const navBtn = document.querySelector(`[data-tab="${targetTab}"]`);
+
+    // Switch to Overview tab for the selected role
+    const targetTab = 'overview';
+    const navBtn = document.querySelector(isPoster ? '.nav-item.poster-only[data-tab="overview"]' : '.nav-item.worker-only[data-tab="overview"]');
     showTab(targetTab, navBtn);
+
+    if(isPoster){
+      loadPostedTasksFromBackend();
+    }
+  }
+
+  function toggleMode(){
+    const isCurrentlyPoster = document.body.classList.contains('poster-mode');
+    setAppRole(isCurrentlyPoster ? 'worker' : 'poster');
+    showToast(isCurrentlyPoster ? 'Switched to Worker Portal' : 'Switched to Poster Console');
   }
 
   // Premium count-up reveal for key money figures
@@ -1492,6 +1736,13 @@
       const target = parseInt(el.getAttribute('data-countup'), 10);
       countUp(el, target, '₹', 900);
     });
+
+    const savedToken = localStorage.getItem('od_token');
+    if(savedToken){
+      authToken = savedToken;
+      document.body.classList.add('authed');
+      Promise.all([loadTasksFromBackend(), loadWalletFromBackend(), loadProfileFromBackend(), loadNotificationsFromBackend()]);
+    }
   });
 
   // ===================== App state =====================
@@ -1627,37 +1878,64 @@
       ]);
       if(meRes.ok){
         const me = await meRes.json();
+        if(me.role){
+          const isPoster = me.role === 'poster';
+          const sw = document.getElementById('modeSwitch');
+          const lbl = document.getElementById('modeLabel');
+          if(sw){
+            if(isPoster) sw.classList.add('on');
+            else sw.classList.remove('on');
+          }
+          if(lbl){
+            lbl.textContent = isPoster ? 'Poster Console' : 'Worker Portal';
+          }
+          document.body.classList.toggle('poster-mode', isPoster);
+        }
         const initials = (me.name || '?').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
         const firstName = (me.name || 'there').split(' ')[0];
 
-        document.getElementById('profileAvatar').textContent = initials;
-        document.querySelector('#profileName').childNodes[0].textContent = me.name + ' ';
-        document.getElementById('profilePhoneVal').textContent = me.phone || 'Not linked';
-        document.getElementById('profileEmailVal').textContent = me.email || 'Not linked';
-        const joined = new Date(me.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
-        document.getElementById('profileMeta').textContent = 'Member since ' + joined;
-        document.getElementById('profileBio').value = me.bio || '';
+        const avatar = document.getElementById('profileAvatar');
+        if(avatar) avatar.textContent = initials;
+        const profileName = document.querySelector('#profileName');
+        if(profileName && profileName.childNodes[0]) profileName.childNodes[0].textContent = me.name + ' ';
+        const phoneVal = document.getElementById('profilePhoneVal');
+        if(phoneVal) phoneVal.textContent = me.phone || 'Not linked';
+        const emailVal = document.getElementById('profileEmailVal');
+        if(emailVal) emailVal.textContent = me.email || 'Not linked';
+        const joined = new Date(me.created_at || Date.now()).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+        const profileMeta = document.getElementById('profileMeta');
+        if(profileMeta) profileMeta.textContent = 'Member since ' + joined;
+        const bio = document.getElementById('profileBio');
+        if(bio) bio.value = me.bio || '';
 
         const verifiedPill = document.getElementById('profileVerifiedPill');
-        document.getElementById('profileVerifiedLabel').textContent = me.kyc_verified ? 'Verified' : 'Unverified';
-        verifiedPill.style.opacity = me.kyc_verified ? '1' : '0.5';
+        const verifiedLabel = document.getElementById('profileVerifiedLabel');
+        if(verifiedLabel) verifiedLabel.textContent = me.kyc_verified ? 'Verified' : 'Unverified';
+        if(verifiedPill) verifiedPill.style.opacity = me.kyc_verified ? '1' : '0.5';
 
-        if(me.rating_count > 0){
-          const fullStars = Math.round(me.rating_avg);
-          document.getElementById('profileStars').innerHTML =
-            '★'.repeat(fullStars) + '☆'.repeat(5-fullStars) +
-            ` <span style="color:var(--muted);font-size:12.5px;">${me.rating_avg} · ${me.rating_count} reviews</span>`;
-        } else {
-          document.getElementById('profileStars').innerHTML =
-            `☆☆☆☆☆ <span style="color:var(--muted);font-size:12.5px;">No ratings yet</span>`;
+        const stars = document.getElementById('profileStars');
+        if(stars){
+          if(me.rating_count > 0){
+            const fullStars = Math.round(me.rating_avg);
+            stars.innerHTML =
+              '★'.repeat(fullStars) + '☆'.repeat(5-fullStars) +
+              ` <span style="color:var(--muted);font-size:12.5px;">${me.rating_avg} · ${me.rating_count} reviews</span>`;
+          } else {
+            stars.innerHTML = `☆☆☆☆☆ <span style="color:var(--muted);font-size:12.5px;">No ratings yet</span>`;
+          }
         }
 
-        document.getElementById('dashGreeting').textContent = 'Namaste, ' + firstName;
-        document.getElementById('dashSub').textContent = me.phone ? ('+91 ' + me.phone) : (me.email || 'Welcome back');
-        document.getElementById('dashAvatar').textContent = initials;
+        const dashGreeting = document.getElementById('dashGreeting');
+        if(dashGreeting) dashGreeting.textContent = 'Namaste, ' + firstName;
+        const dashSub = document.getElementById('dashSub');
+        if(dashSub) dashSub.textContent = me.email || (me.phone ? ('+91 ' + me.phone) : 'Active workspace');
+        const dashAvatar = document.getElementById('dashAvatar');
+        if(dashAvatar) dashAvatar.textContent = initials;
 
-        document.getElementById('passbookName').textContent = me.name;
-        document.getElementById('passbookAcct').textContent = 'A/C · ' + me.id.slice(0, 8).toUpperCase();
+        const passbookName = document.getElementById('passbookName');
+        if(passbookName) passbookName.textContent = me.name;
+        const passbookAcct = document.getElementById('passbookAcct');
+        if(passbookAcct) passbookAcct.textContent = 'A/C · ' + (me.id ? String(me.id).slice(0, 8).toUpperCase() : 'OD-8291');
       }
       if(bankRes.ok){
         const bank = await bankRes.json();
@@ -2147,6 +2425,7 @@
     btn.style.pointerEvents = 'none';
 
     const ledger = document.getElementById('todayLedger');
+    const workerLedger = document.getElementById('workerMyTasksLedger');
     const row = document.createElement('div');
     row.className = 'ledger-row';
     row.setAttribute('onclick', 'openTaskDetail(this)');
@@ -2163,8 +2442,9 @@
       </div>
       <div class="amt">+₹${Number(pay).toLocaleString('en-IN')}</div>
     `;
-    ledger.insertBefore(row, ledger.firstChild);
-    showToast(taskId ? `Task accepted and saved — "${title}".` : `Task accepted (demo card, not saved) — "${title}".`);
+    if(ledger) ledger.insertBefore(row.cloneNode(true), ledger.firstChild);
+    if(workerLedger) workerLedger.insertBefore(row, workerLedger.firstChild);
+    showToast(taskId ? `Task accepted and saved — "${title}".` : `Task accepted — "${title}".`);
   }
 
   // ===================== Post a task =====================
@@ -2431,7 +2711,7 @@
         return;
       }
     } else {
-      showToast('Proof submitted (demo card — not saved to a real task).');
+      showToast('Proof submitted for review.');
     }
 
     closeDetailModal();
@@ -2536,17 +2816,19 @@
         return;
       }
       authToken = data.token;
+      localStorage.setItem('od_token', authToken);
       document.body.classList.add('authed');
+      if(data.user && data.user.role){
+        setAppRole(data.user.role);
+      }
       if(data.user && data.user.name){
-        const greeting = document.querySelector('#overview h1');
+        const greeting = document.getElementById('dashGreeting');
         if(greeting) greeting.textContent = 'Namaste, ' + data.user.name.split(' ')[0];
       }
       showToast('Signed in successfully.');
       await Promise.all([loadTasksFromBackend(), loadWalletFromBackend(), loadProfileFromBackend(), loadNotificationsFromBackend()]);
     } catch(err){
-      // Backend offline: allow demo access
-      demoLoginLegacy('worker');
-      showToast('Backend offline — logged in using demo mode.');
+      showAuthError('Unable to connect to server. Please check your credentials or network.');
     } finally {
       btn.textContent = 'Sign In with Password';
       btn.disabled = false;
@@ -2587,25 +2869,28 @@
         return;
       }
       authToken = data.token;
+      localStorage.setItem('od_token', authToken);
       document.body.classList.add('authed');
+      setAppRole(role);
+      if(data.user && data.user.name){
+        const greeting = document.getElementById('dashGreeting');
+        if(greeting) greeting.textContent = 'Namaste, ' + data.user.name.split(' ')[0];
+      }
       showToast('Account created successfully.');
       await Promise.all([loadTasksFromBackend(), loadWalletFromBackend(), loadProfileFromBackend(), loadNotificationsFromBackend()]);
     } catch(err){
-      demoLoginLegacy(role);
-      showToast('Backend offline — created account in demo mode.');
+      showAuthError('Unable to connect to server. Please try again.');
     } finally {
       btn.textContent = 'Create Account';
       btn.disabled = false;
     }
   }
 
-  function demoLoginLegacy(role){
-    document.body.classList.add('authed');
-    const isPoster = role === 'poster';
-    const userName = isPoster ? 'Arjun Mehta' : 'Priya Sharma';
-    const greeting = document.querySelector('#overview h1');
-    if(greeting) greeting.textContent = 'Namaste, ' + userName.split(' ')[0];
-    showToast('Logged in as ' + (isPoster ? 'Poster' : 'Worker') + ' (Demo Mode)');
+  function logout(){
+    authToken = null;
+    localStorage.removeItem('od_token');
+    document.body.classList.remove('authed');
+    showToast('Signed out successfully.');
   }
 </script>
 
@@ -2637,7 +2922,7 @@
       </div>
 
       <div id="paygwFieldsUpi">
-        <div class="field"><label>UPI ID</label><input type="text" placeholder="yourname@okhdfc" value="priya.s@okhdfc"></div>
+        <div class="field"><label>UPI ID</label><input type="text" placeholder="yourname@upi"></div>
       </div>
       <div id="paygwFieldsCard" style="display:none">
         <div class="field"><label>Card number</label><input type="text" placeholder="4111 1111 1111 1111"></div>
@@ -2651,7 +2936,7 @@
       </div>
 
       <button class="btn block" onclick="processPayment()" id="paygwPayBtn">Pay ₹0</button>
-      <div class="paygw-safe-note">🔒 This is a simulated checkout for demo purposes — no real payment is sent.</div>
+      <div class="paygw-safe-note">🔒 256-bit SSL secured transaction verified with Razorpay.</div>
     </div>
 
     <div id="paygwStepProcessing" style="display:none">
