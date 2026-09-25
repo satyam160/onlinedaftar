@@ -20,9 +20,4 @@ onlinedaftar/
 1. See `backend/README.md` for full backend setup (database, Razorpay keys, etc.)
 2. Once the backend is running (`npm run dev` inside `backend/`)`.
 
-## Note on secrets
 
-`backend/.env` is intentionally **not** included in this repo (see
-`backend/.gitignore`) — it holds your real Razorpay keys and database URL.
-After cloning this repo, copy `backend/.env.example` to `backend/.env` and
-fill in your own values.
