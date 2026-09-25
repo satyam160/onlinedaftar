@@ -11,8 +11,7 @@ onlinedaftar/
 └── backend/          ← the Node.js + Express + PostgreSQL API
     ├── server.js
     ├── routes/
-    ├── db/
-    
+    ── db/
 ```
 
 
