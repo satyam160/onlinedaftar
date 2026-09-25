@@ -7,7 +7,7 @@ them, escrow-protected payments via Razorpay, OTP login by mobile/email.
 
 ```
 onlinedaftar/
-├── index.html       ← the frontend (open this in a browser)
+├── index.html       ← the frontend 
 └── backend/          ← the Node.js + Express + PostgreSQL API
     ├── server.js
     ├── routes/
@@ -18,9 +18,7 @@ onlinedaftar/
 ## Quick start
 
 1. See `backend/README.md` for full backend setup (database, Razorpay keys, etc.)
-2. Once the backend is running (`npm run dev` inside `backend/`), open
-   `index.html` directly in your browser — it's already configured to
-   talk to `http://localhost:4000`.
+2. Once the backend is running (`npm run dev` inside `backend/`)`.
 
 ## Note on secrets
 
