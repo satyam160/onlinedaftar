@@ -760,7 +760,7 @@
 </head>
 <body>
 
-<!-- Login gate: mobile/email OTP -->
+<!-- Login gate: Username and Password login -->
 <div class="auth-overlay" id="authOverlay">
   <div class="auth-card">
     <div class="auth-brand">
@@ -769,48 +769,58 @@
     </div>
     <div class="auth-sub">Sign in to continue — real work, real ledger, real pay</div>
 
-    <div class="auth-error" id="authError"></div>
-
-    <!-- Step 0: choose method + enter identifier -->
-    <div class="auth-step active" id="authStepIdentifier">
-      <div class="field">
-        <label>Full name</label>
-        <input type="text" id="authName" placeholder="Priya Sharma">
-      </div>
-      <div class="auth-tabs">
-        <button class="auth-tab active" data-method="mobile" onclick="switchAuthMethod('mobile', this)">Mobile</button>
-        <button class="auth-tab" data-method="email" onclick="switchAuthMethod('email', this)">Email</button>
-      </div>
-      <div class="field" id="fieldMobile">
-        <label>Mobile number</label>
-        <input type="tel" id="authMobile" placeholder="98765 43210" maxlength="10">
-      </div>
-      <div class="field" id="fieldEmail" style="display:none">
-        <label>Email address</label>
-        <input type="email" id="authEmail" placeholder="you@example.com">
-      </div>
-      <button class="btn block" onclick="sendAuthOtp()" id="sendOtpBtn">Send OTP</button>
-      <div class="auth-sub" style="margin-top:12px;font-size:11px;">New here? This creates your account. Already signed up? Just enter the same number/email again — name is optional after your first login.</div>
+    <div class="auth-tabs" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+      <button class="auth-tab active" id="tabSignIn" onclick="switchLegacyAuthTab('signin')">Sign In</button>
+      <button class="auth-tab" id="tabSignUp" onclick="switchLegacyAuthTab('signup')">Create Account</button>
     </div>
 
-    <!-- Step 1: enter OTP -->
-    <div class="auth-step" id="authStepOtp">
-      <div class="auth-sub" style="margin-bottom:8px;">Enter the 6-digit code sent to <b id="authIdentifierDisplay" style="color:var(--text)"></b></div>
-      <div class="otp-boxes" id="otpBoxes">
-        <input type="text" inputmode="numeric" maxlength="1">
-        <input type="text" inputmode="numeric" maxlength="1">
-        <input type="text" inputmode="numeric" maxlength="1">
-        <input type="text" inputmode="numeric" maxlength="1">
-        <input type="text" inputmode="numeric" maxlength="1">
-        <input type="text" inputmode="numeric" maxlength="1">
+    <div class="auth-error" id="authError"></div>
+
+    <!-- Sign In Form -->
+    <div class="auth-step active" id="authStepSignIn">
+      <div class="field">
+        <label>Username or Email address</label>
+        <input type="text" id="loginUsername" placeholder="e.g. arjun or priya@example.com" value="priya.s@daftardemo.in">
       </div>
-      <div class="auth-resend">
-        Didn't get it? <button id="resendBtn" onclick="resendAuthOtp()" disabled>Resend in <span id="resendTimer">30</span>s</button>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter password" value="password123">
       </div>
-      <button class="btn block" onclick="verifyAuthOtp()">Verify &amp; continue</button>
-      <button class="auth-back" onclick="backToIdentifier()">← Use a different number/email</button>
-      <div class="auth-demo-note" id="authDemoNote">
-        🔒 No backend detected — running in demo mode. Your code was logged to the browser console (press F12), or just enter <b>123456</b>.
+      <button class="btn block" onclick="handleLegacyLogin()" id="loginBtn" style="margin-top:12px;">Sign In with Password</button>
+    </div>
+
+    <!-- Sign Up Form -->
+    <div class="auth-step" id="authStepSignUp" style="display:none;">
+      <div class="field">
+        <label>Full Name / Username</label>
+        <input type="text" id="regName" placeholder="e.g. Priya Sharma">
+      </div>
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" id="regEmail" placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label>Password (min 6 chars)</label>
+        <input type="password" id="regPassword" placeholder="••••••••">
+      </div>
+      <div class="field">
+        <label>Role</label>
+        <select id="regRole">
+          <option value="worker">Worker — Complete gigs & earn</option>
+          <option value="poster">Poster — Hire workers with escrow</option>
+        </select>
+      </div>
+      <button class="btn block" onclick="handleLegacyRegister()" id="regBtn" style="margin-top:12px;">Create Account</button>
+    </div>
+
+    <!-- 1-Click Fast Interview Demo -->
+    <div style="margin-top:20px;padding-top:14px;border-top:1px solid var(--border);">
+      <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">
+        ⚡ Fast Interview Demo Access
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button class="btn btn-subtle" onclick="demoLoginLegacy('worker')" style="font-size:11.5px;padding:8px 10px;">Demo as Worker</button>
+        <button class="btn btn-subtle" onclick="demoLoginLegacy('poster')" style="font-size:11.5px;padding:8px 10px;">Demo as Poster</button>
       </div>
     </div>
   </div>
@@ -2465,184 +2475,138 @@
     }, 1600);
   }
 
-  // ===================== Auth / OTP login =====================
-  // Uses the same API_BASE defined above. If the backend isn't running,
-  // this automatically falls back to a clearly-labeled demo mode.
-  let authMethod = 'mobile';
-  let authIdentifier = '';
-  let demoOtpCode = null;
-  let resendInterval = null;
-
-  function switchAuthMethod(method, tabEl){
-    authMethod = method;
-    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-    tabEl.classList.add('active');
-    document.getElementById('fieldMobile').style.display = method === 'mobile' ? 'block' : 'none';
-    document.getElementById('fieldEmail').style.display = method === 'email' ? 'block' : 'none';
+  // ===================== Username & Password Authentication =====================
+  function switchLegacyAuthTab(tab){
     hideAuthError();
+    const btnIn = document.getElementById('tabSignIn');
+    const btnUp = document.getElementById('tabSignUp');
+    const stepIn = document.getElementById('authStepSignIn');
+    const stepUp = document.getElementById('authStepSignUp');
+
+    if(tab === 'signin'){
+      btnIn.classList.add('active');
+      btnUp.classList.remove('active');
+      stepIn.style.display = 'block';
+      stepUp.style.display = 'none';
+    } else {
+      btnUp.classList.add('active');
+      btnIn.classList.remove('active');
+      stepUp.style.display = 'block';
+      stepIn.style.display = 'none';
+    }
   }
 
   function showAuthError(msg){
     const el = document.getElementById('authError');
+    if(!el) return;
     el.textContent = msg;
     el.classList.add('show');
   }
   function hideAuthError(){
-    document.getElementById('authError').classList.remove('show');
+    const el = document.getElementById('authError');
+    if(!el) return;
+    el.classList.remove('show');
   }
 
-  async function sendAuthOtp(){
+  async function handleLegacyLogin(){
     hideAuthError();
-    const identifier = authMethod === 'mobile'
-      ? document.getElementById('authMobile').value.trim()
-      : document.getElementById('authEmail').value.trim();
+    const identifier = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const btn = document.getElementById('loginBtn');
 
-    if(authMethod === 'mobile' && !/^[6-9]\d{9}$/.test(identifier)){
-      showAuthError('Enter a valid 10-digit mobile number.'); return;
-    }
-    if(authMethod === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier)){
-      showAuthError('Enter a valid email address.'); return;
-    }
-    authIdentifier = identifier;
-
-    const btn = document.getElementById('sendOtpBtn');
-    btn.textContent = 'Sending…'; btn.disabled = true;
-
-    let usedBackend = false;
-    let backendErrorMsg = null;
-    if(API_BASE){
-      try{
-        const resp = await fetch(API_BASE + '/otp/send', {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ identifier, method: authMethod })
-        });
-        if(resp.ok){
-          usedBackend = true;
-        } else {
-          const err = await resp.json().catch(() => ({}));
-          backendErrorMsg = err.error || `Server returned ${resp.status}`;
-        }
-      } catch(e){ /* genuinely unreachable — falls through to demo mode below */ }
-    }
-
-    if(backendErrorMsg){
-      // Backend WAS reached but rejected the request — show the real
-      // reason instead of pretending it's a connection problem.
-      showAuthError('Backend error: ' + backendErrorMsg);
-      btn.textContent = 'Send OTP'; btn.disabled = false;
+    if(!identifier || !password){
+      showAuthError('Username/email and password are required.');
       return;
     }
 
-    if(!usedBackend){
-      demoOtpCode = String(Math.floor(100000 + Math.random()*900000));
-      console.log('%c[DEMO MODE] Your OTP code is: ' + demoOtpCode, 'font-size:14px;font-weight:bold;color:#CFA645;');
-      document.getElementById('authDemoNote').classList.add('show');
-    } else {
-      document.getElementById('authDemoNote').classList.remove('show');
-    }
-
-    btn.textContent = 'Send OTP'; btn.disabled = false;
-    document.getElementById('authIdentifierDisplay').textContent =
-      authMethod === 'mobile' ? '+91 ' + identifier : identifier;
-    document.getElementById('authStepIdentifier').classList.remove('active');
-    document.getElementById('authStepOtp').classList.add('active');
-    document.querySelectorAll('#otpBoxes input').forEach(inp => inp.value = '');
-    document.querySelectorAll('#otpBoxes input')[0].focus();
-    startResendTimer();
-  }
-
-  function resendAuthOtp(){
-    sendAuthOtp();
-  }
-
-  function backToIdentifier(){
-    document.getElementById('authStepOtp').classList.remove('active');
-    document.getElementById('authStepIdentifier').classList.add('active');
-    clearInterval(resendInterval);
-    hideAuthError();
-  }
-
-  function startResendTimer(){
-    let seconds = 30;
-    const btn = document.getElementById('resendBtn');
-    const span = document.getElementById('resendTimer');
+    btn.textContent = 'Signing in…';
     btn.disabled = true;
-    clearInterval(resendInterval);
-    resendInterval = setInterval(() => {
-      seconds--;
-      span.textContent = seconds;
-      if(seconds <= 0){
-        clearInterval(resendInterval);
+
+    try{
+      const res = await fetch(API_BASE + '/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier, password })
+      });
+      const data = await res.json();
+      if(!res.ok){
+        showAuthError(data.error || 'Invalid credentials');
+        btn.textContent = 'Sign In with Password';
         btn.disabled = false;
-        btn.innerHTML = 'Resend code';
+        return;
       }
-    }, 1000);
-  }
-
-  async function verifyAuthOtp(){
-    hideAuthError();
-    const boxes = document.querySelectorAll('#otpBoxes input');
-    const code = Array.from(boxes).map(b => b.value).join('');
-    if(code.length !== 6){ showAuthError('Enter the full 6-digit code.'); return; }
-
-    let verified = false;
-    let userName = null;
-    let token = null;
-
-    if(API_BASE){
-      try{
-        const resp = await fetch(API_BASE + '/otp/verify', {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ identifier: authIdentifier, method: authMethod, code, name: document.getElementById('authName').value.trim() || undefined })
-        });
-        const data = await resp.json();
-        if(resp.ok){ verified = true; userName = data.user?.name; token = data.token; }
-        else { showAuthError(data.error || 'Verification failed.'); return; }
-      } catch(e){
-        // Backend unreachable at verify time — fall back to demo acceptance
-        // so the UI is still usable as a standalone preview.
-        if(code === demoOtpCode || code === '123456'){ verified = true; }
-        else { showAuthError('Could not reach the server, and this code doesn\'t match demo mode.'); return; }
-      }
-    } else {
-      // Demo mode: accept the generated demo code, or 123456 as a universal test code
-      if(code === demoOtpCode || code === '123456'){ verified = true; }
-      else { showAuthError('Incorrect code. Try the code shown in your console, or 123456 in demo mode.'); return; }
-    }
-
-    if(verified){
+      authToken = data.token;
       document.body.classList.add('authed');
-      if(token){
-        authToken = token;
-        await Promise.all([loadTasksFromBackend(), loadWalletFromBackend(), loadProfileFromBackend(), loadNotificationsFromBackend()]);
-      }
-      if(userName){
+      if(data.user && data.user.name){
         const greeting = document.querySelector('#overview h1');
-        if(greeting) greeting.textContent = 'Namaste, ' + userName.split(' ')[0];
+        if(greeting) greeting.textContent = 'Namaste, ' + data.user.name.split(' ')[0];
       }
       showToast('Signed in successfully.');
+      await Promise.all([loadTasksFromBackend(), loadWalletFromBackend(), loadProfileFromBackend(), loadNotificationsFromBackend()]);
+    } catch(err){
+      // Backend offline: allow demo access
+      demoLoginLegacy('worker');
+      showToast('Backend offline — logged in using demo mode.');
+    } finally {
+      btn.textContent = 'Sign In with Password';
+      btn.disabled = false;
     }
   }
 
-  // OTP box auto-advance + backspace + paste support
-  document.addEventListener('DOMContentLoaded', () => {
-    const boxes = document.querySelectorAll('#otpBoxes input');
-    boxes.forEach((box, i) => {
-      box.addEventListener('input', () => {
-        box.value = box.value.replace(/[^0-9]/g, '').slice(0, 1);
-        if(box.value && i < boxes.length - 1) boxes[i+1].focus();
+  async function handleLegacyRegister(){
+    hideAuthError();
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const role = document.getElementById('regRole').value;
+    const btn = document.getElementById('regBtn');
+
+    if(!name || !email || !password){
+      showAuthError('Name, email, and password are required.');
+      return;
+    }
+    if(password.length < 6){
+      showAuthError('Password must be at least 6 characters.');
+      return;
+    }
+
+    btn.textContent = 'Creating account…';
+    btn.disabled = true;
+
+    try{
+      const res = await fetch(API_BASE + '/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, role })
       });
-      box.addEventListener('keydown', (e) => {
-        if(e.key === 'Backspace' && !box.value && i > 0) boxes[i-1].focus();
-      });
-      box.addEventListener('paste', (e) => {
-        e.preventDefault();
-        const pasted = (e.clipboardData.getData('text') || '').replace(/[^0-9]/g, '').slice(0,6);
-        pasted.split('').forEach((ch, idx) => { if(boxes[idx]) boxes[idx].value = ch; });
-        if(pasted.length === 6) boxes[5].focus();
-      });
-    });
-  });
+      const data = await res.json();
+      if(!res.ok){
+        showAuthError(data.error || 'Could not create account');
+        btn.textContent = 'Create Account';
+        btn.disabled = false;
+        return;
+      }
+      authToken = data.token;
+      document.body.classList.add('authed');
+      showToast('Account created successfully.');
+      await Promise.all([loadTasksFromBackend(), loadWalletFromBackend(), loadProfileFromBackend(), loadNotificationsFromBackend()]);
+    } catch(err){
+      demoLoginLegacy(role);
+      showToast('Backend offline — created account in demo mode.');
+    } finally {
+      btn.textContent = 'Create Account';
+      btn.disabled = false;
+    }
+  }
+
+  function demoLoginLegacy(role){
+    document.body.classList.add('authed');
+    const isPoster = role === 'poster';
+    const userName = isPoster ? 'Arjun Mehta' : 'Priya Sharma';
+    const greeting = document.querySelector('#overview h1');
+    if(greeting) greeting.textContent = 'Namaste, ' + userName.split(' ')[0];
+    showToast('Logged in as ' + (isPoster ? 'Poster' : 'Worker') + ' (Demo Mode)');
+  }
 </script>
 
 <!-- Toast -->
