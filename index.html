@@ -1,16 +1,2714 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OnlineDaftar — Real work. Real ledger. Real pay.</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<meta charset="UTF-8">
+<title>OnlineDaftar — Real work. Real ledger. Real pay.</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+  :root{
+    --bg:#161009;
+    --bg-alt:#0E0A05;
+    --surface:#221A10;
+    --surface-2:#2C2214;
+    --surface-3:#392C18;
+    --gold:#CFA645;
+    --gold-soft:#E0BE6C;
+    --gold-hi:#F0D690;
+    --gold-dim:rgba(207,166,69,0.14);
+    --foil:#B8892A;
+    --foil-soft:#D4AB4E;
+    --foil-dim:rgba(184,137,42,0.16);
+    --mint:#3FA873;
+    --mint-dim:rgba(63,168,115,0.16);
+    --text:#F4EEE0;
+    --muted:#B7A98A;
+    --muted-2:#8A7C5D;
+    --danger:#D97656;
+    --danger-dim:rgba(217,118,86,0.16);
+    --border:rgba(244,238,224,0.09);
+    --border-strong:rgba(244,238,224,0.18);
+    --border-gold:rgba(207,166,69,0.4);
+    --shadow-sm:0 2px 8px rgba(0,0,0,0.3);
+    --shadow-md:0 10px 28px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-lg:0 24px 55px rgba(0,0,0,0.5), 0 4px 14px rgba(0,0,0,0.35);
+    --shadow-gold:0 5px 18px rgba(207,166,69,0.28);
+    --ease:cubic-bezier(.16,.84,.44,1);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      repeating-linear-gradient(115deg, rgba(244,238,224,0.012) 0px, rgba(244,238,224,0.012) 1px, transparent 1px, transparent 3px),
+      radial-gradient(circle at 15% 0%, rgba(207,166,69,0.08), transparent 45%),
+      radial-gradient(circle at 100% 100%, rgba(63,168,115,0.06), transparent 50%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Instrument Sans', sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:10px;border:2px solid var(--bg);}
+  ::-webkit-scrollbar-thumb:hover{background:var(--gold-dim);}
+  .display{font-family:'Fraunces', serif;}
+  .mono{font-family:'JetBrains Mono', monospace; font-feature-settings:"tnum","liga" 1; font-variant-numeric:tabular-nums;}
+
+  a{color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+
+  ::selection{background:var(--gold-dim); color:var(--gold-hi);}
+
+  /* subtle top hairline accent across whole app */
+  .app::before{
+    content:'';
+    position:fixed;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg, transparent, var(--foil) 20%, var(--foil-soft) 50%, var(--foil) 80%, transparent);
+    opacity:0.65;
+    z-index:20;
+    pointer-events:none;
+  }
+
+  /* ---------- App shell ---------- */
+  .app{
+    display:grid;
+    grid-template-columns:240px 1fr;
+    min-height:100vh;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    background:linear-gradient(180deg, var(--bg-alt), #DED4B8);
+    border-right:1px solid var(--border-strong);
+    padding:30px 18px;
+    display:flex;
+    flex-direction:column;
+    gap:34px;
+    position:relative;
+    box-shadow:var(--shadow-md);
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:0 8px;
+  }
+  .brand-mark{
+    width:34px;height:34px;
+    border-radius:9px;
+    background:linear-gradient(155deg, var(--gold-hi), var(--gold) 65%);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    color:#211705;
+    font-size:17px;
+    flex-shrink:0;
+    box-shadow:var(--shadow-gold), inset 0 1px 0 rgba(255,255,255,0.35);
+  }
+  .brand-name{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:21px;
+    letter-spacing:0.2px;
+    background:linear-gradient(90deg, var(--gold-hi), var(--gold-soft));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .brand-tag{
+    font-size:9.5px;
+    color:var(--muted-2);
+    text-transform:uppercase;
+    letter-spacing:1.6px;
+    padding:0 9px;
+    margin-top:-26px;
+  }
+
+  nav{display:flex;flex-direction:column;gap:2px;}
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 12px;
+    border-radius:9px;
+    border:none;
+    background:transparent;
+    color:var(--muted);
+    font-size:13.5px;
+    font-weight:500;
+    text-align:left;
+    position:relative;
+    transition:background .2s var(--ease), color .2s var(--ease), transform .2s var(--ease);
+  }
+  .nav-item svg{flex-shrink:0;opacity:0.75;transition:opacity .2s ease;}
+  .nav-item:hover{background:var(--surface);color:var(--text);transform:translateX(1px);}
+  .nav-item:hover svg{opacity:1;}
+  .nav-item.active{
+    background:linear-gradient(90deg, var(--gold-dim), transparent);
+    color:var(--gold-soft);
+  }
+  .nav-item.active::before{
+    content:'';
+    position:absolute;left:-18px;top:50%;transform:translateY(-50%);
+    width:3px;height:18px;border-radius:3px;
+    background:var(--gold);
+  }
+  .nav-item.active svg{opacity:1;}
+  .nav-item:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+  /* Poster/Worker mode: dim the less-relevant nav items. Opacity only —
+     never display/width/height — so nothing reflows when switching. */
+  .nav-item{transition:background .2s var(--ease), color .2s var(--ease), transform .2s var(--ease), opacity .25s ease;}
+  body.poster-mode .nav-item[data-tab="browse"]{opacity:0.4;}
+  body:not(.poster-mode) .nav-item[data-tab="post"]{opacity:0.4;}
+  .nav-badge{
+    margin-left:auto;
+    background:var(--danger);
+    color:#FDF3EF;
+    font-size:10px;
+    font-weight:700;
+    min-width:17px;height:17px;
+    border-radius:9px;
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:0 4px;
+  }
+
+  /* ---------- Notifications feed ---------- */
+  .notif-day-label{
+    font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted-2);
+    margin:22px 0 10px;font-weight:600;
+  }
+  .notif-day-label:first-child{margin-top:0;}
+  .notif-row{
+    display:flex;gap:14px;align-items:flex-start;
+    padding:15px 18px;
+    border-bottom:1px dashed var(--border-strong);
+    position:relative;
+    transition:background .18s ease;
+  }
+  .notif-row:hover{background:var(--surface-2);}
+  .notif-row:last-child{border-bottom:none;}
+  .notif-row.unread{background:var(--gold-dim);}
+  .notif-row.unread:hover{background:var(--gold-dim);}
+  .notif-row.unread::before{
+    content:'';position:absolute;left:6px;top:22px;
+    width:6px;height:6px;border-radius:50%;background:var(--gold);
+  }
+  .notif-icon{
+    width:38px;height:38px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .notif-icon.mint{background:var(--mint-dim);color:var(--mint);}
+  .notif-icon.indigo{background:var(--gold-dim);color:var(--gold);}
+  .notif-icon.mustard{background:rgba(140,109,31,0.12);color:#8C6D1F;}
+  .notif-icon.danger{background:var(--danger-dim);color:var(--danger);}
+  .notif-body{flex:1;min-width:0;}
+  .notif-body .title{font-size:13.5px;font-weight:500;line-height:1.4;}
+  .notif-body .title b{font-weight:600;}
+  .notif-body .time{font-size:11.5px;color:var(--muted-2);margin-top:3px;}
+  .notif-actions{display:flex;justify-content:flex-end;margin-bottom:14px;}
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--text);color:var(--bg);
+    padding:12px 22px;border-radius:10px;font-size:13px;font-weight:500;
+    box-shadow:var(--shadow-lg);
+    opacity:0;pointer-events:none;
+    transition:opacity .25s var(--ease), transform .25s var(--ease);
+    z-index:100;
+    display:flex;align-items:center;gap:8px;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* ---------- Simulated payment gateway ---------- */
+  .paygw-overlay{
+    position:fixed;inset:0;background:rgba(20,18,10,0.45);
+    display:none;align-items:center;justify-content:center;z-index:200;
+    backdrop-filter:blur(2px);
+  }
+  .paygw-overlay.show{display:flex;}
+  .paygw-modal{
+    background:var(--surface);border:1px solid var(--border);border-radius:18px;
+    width:380px;max-width:92vw;padding:0;box-shadow:var(--shadow-lg);
+    animation:paygwIn .25s var(--ease);
+  }
+  @keyframes paygwIn{from{opacity:0;transform:translateY(14px) scale(.98);}to{opacity:1;transform:translateY(0) scale(1);}}
+  .paygw-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 20px;border-bottom:1px solid var(--border);
+  }
+  .paygw-lock{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13.5px;color:var(--gold);}
+  .paygw-close{background:none;border:none;color:var(--muted);font-size:15px;padding:4px;}
+  .paygw-close:hover{color:var(--text);}
+  #paygwStepPay, #paygwStepProcessing, #paygwStepSuccess{padding:20px;}
+  .paygw-amount-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;}
+  .paygw-amount-row .lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted-2);}
+  .paygw-amount-row .val{font-size:26px;font-weight:700;color:var(--gold);}
+  .paygw-purpose{font-size:12.5px;color:var(--muted);margin-bottom:18px;}
+  .paygw-methods{display:flex;gap:8px;margin-bottom:16px;}
+  .paygw-tab{
+    flex:1;padding:9px;border-radius:8px;border:1px solid var(--border-strong);
+    background:var(--bg-alt);color:var(--muted);font-size:12.5px;font-weight:600;
+  }
+  .paygw-tab.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);}
+  .paygw-safe-note{font-size:11px;color:var(--muted-2);text-align:center;margin-top:12px;line-height:1.5;}
+  .paygw-spinner{
+    width:38px;height:38px;border-radius:50%;
+    border:3px solid var(--border-strong);border-top-color:var(--gold);
+    margin:10px auto 18px;
+    animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .paygw-processing-text{text-align:center;font-weight:600;font-size:14px;}
+  .paygw-processing-sub{text-align:center;font-size:12px;color:var(--muted-2);margin-top:4px;}
+  .paygw-success-check{
+    width:56px;height:56px;border-radius:50%;
+    background:var(--mint-dim);color:var(--mint);
+    display:flex;align-items:center;justify-content:center;
+    margin:6px auto 16px;
+  }
+  .paygw-success-title{text-align:center;font-family:'Fraunces';font-weight:600;font-size:18px;}
+  .paygw-success-sub{text-align:center;font-size:13px;color:var(--muted);margin:6px 0 18px;}
+
+  /* ---------- Auth gate (mobile/email OTP login) ---------- */
+  body:not(.authed) .app{display:none;}
+  .auth-overlay{
+    position:fixed;inset:0;z-index:300;
+    display:flex;align-items:center;justify-content:center;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(207,166,69,0.1), transparent 45%),
+      radial-gradient(circle at 90% 90%, rgba(63,168,115,0.08), transparent 50%),
+      var(--bg);
+  }
+  body.authed .auth-overlay{display:none;}
+  .auth-card{
+    width:400px;max-width:92vw;
+    background:linear-gradient(165deg, var(--surface-2), var(--surface));
+    border:1px solid var(--border-gold);
+    border-radius:20px;
+    padding:32px 30px;
+    box-shadow:var(--shadow-lg);
+    animation:paygwIn .3s var(--ease);
+  }
+  .auth-brand{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:6px;}
+  .auth-brand .brand-mark{width:30px;height:30px;font-size:15px;}
+  .auth-brand .brand-name{font-size:19px;}
+  .auth-sub{text-align:center;color:var(--muted);font-size:12.5px;margin-bottom:24px;}
+  .auth-tabs{display:flex;gap:8px;margin-bottom:18px;}
+  .auth-tab{
+    flex:1;padding:9px;border-radius:8px;border:1px solid var(--border-strong);
+    background:var(--bg-alt);color:var(--muted);font-size:12.5px;font-weight:600;
+  }
+  .auth-tab.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold-soft);}
+  .auth-step{display:none;}
+  .auth-step.active{display:block;}
+  .otp-boxes{display:flex;gap:8px;justify-content:center;margin:18px 0 6px;}
+  .otp-boxes input{
+    width:42px;height:50px;text-align:center;font-size:19px;font-weight:600;
+    font-family:'JetBrains Mono';background:var(--bg-alt);color:var(--text);
+    border:1px solid var(--border-strong);border-radius:9px;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .otp-boxes input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(207,166,69,0.16);}
+  .auth-resend{text-align:center;font-size:12px;color:var(--muted-2);margin:8px 0 18px;}
+  .auth-resend button{background:none;border:none;color:var(--gold-soft);font-weight:600;font-size:12px;padding:0;}
+  .auth-resend button:disabled{color:var(--muted-2);cursor:default;}
+  .auth-back{background:none;border:none;color:var(--muted);font-size:12px;margin-top:14px;display:block;margin-left:auto;margin-right:auto;}
+  .auth-back:hover{color:var(--text);}
+  .auth-error{
+    background:var(--danger-dim);color:var(--danger);border:1px solid rgba(217,118,86,0.3);
+    border-radius:8px;padding:9px 12px;font-size:12px;margin-bottom:14px;display:none;
+  }
+  .auth-error.show{display:block;}
+  .auth-demo-note{
+    background:var(--foil-dim);border:1px solid var(--border-gold);border-radius:8px;
+    padding:10px 12px;font-size:11.5px;color:var(--gold-soft);margin-top:14px;line-height:1.5;display:none;
+  }
+  .auth-demo-note.show{display:block;}
+
+  .mode-toggle{
+    margin-top:auto;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px;
+  }
+  .mode-toggle-label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--muted-2);
+    margin-bottom:8px;
+  }
+  .switch-row{display:flex;align-items:center;justify-content:space-between;}
+  .switch-row span{font-size:13px;font-weight:500;}
+  .switch{
+    position:relative;
+    width:38px;height:21px;
+    background:var(--surface-3);
+    border-radius:20px;
+    border:1px solid var(--border-strong);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .switch::after{
+    content:'';
+    position:absolute;
+    top:2px;left:2px;
+    width:15px;height:15px;
+    background:var(--muted);
+    border-radius:50%;
+    transition:transform .18s ease, background .18s ease;
+  }
+  .switch.on{background:var(--mint-dim);border-color:var(--mint);}
+  .switch.on::after{transform:translateX(17px);background:var(--mint);}
+
+  /* ---------- Main ---------- */
+  main{padding:26px 36px 60px;max-width:1100px;}
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:28px;
+  }
+  .topbar h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:28px;
+    margin:0;
+    letter-spacing:-0.3px;
+  }
+  .topbar .sub{color:var(--muted);font-size:13px;margin-top:5px;}
+  .wallet-pill{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    background:linear-gradient(165deg, var(--surface-2), var(--surface));
+    border:1px solid var(--border-strong);
+    padding:8px 18px 8px 8px;
+    border-radius:32px;
+    box-shadow:var(--shadow-sm);
+  }
+  .wallet-pill .avatar{
+    width:32px;height:32px;border-radius:50%;
+    background:linear-gradient(155deg,#25392C,#152018);
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:600;color:var(--mint);
+    border:1px solid var(--border-gold);
+    box-shadow:0 0 0 3px rgba(43,58,103,0.07);
+  }
+  .wallet-pill .amt{font-family:'JetBrains Mono';font-weight:600;color:var(--gold-soft);font-size:14px;}
+  .wallet-pill .lbl{font-size:10px;color:var(--muted-2);text-transform:uppercase;letter-spacing:0.6px;}
+
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;animation:fadein .25s ease;}
+  @keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+  /* ---------- Cards / stat grid ---------- */
+  .stat-grid{
+    display:grid;
+    grid-template-columns:1.3fr 1fr 1fr;
+    gap:16px;
+    margin-bottom:20px;
+  }
+  .card{
+    background:linear-gradient(165deg, var(--surface-2), var(--surface));
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+    box-shadow:var(--shadow-sm);
+    transition:box-shadow .25s var(--ease), transform .25s var(--ease), border-color .25s ease;
+  }
+  .card:hover{box-shadow:var(--shadow-md);border-color:var(--border-strong);}
+  .hero-card{
+    background:
+      radial-gradient(circle at 100% 0%, rgba(43,58,103,0.06), transparent 60%),
+      linear-gradient(165deg, var(--surface-2), var(--surface));
+    border:1px solid var(--border-gold);
+    position:relative;
+    overflow:hidden;
+    box-shadow:var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+  .hero-card::after{
+    content:'';
+    position:absolute;top:-40%;right:-15%;width:220px;height:220px;
+    background:radial-gradient(circle, rgba(43,58,103,0.07), transparent 70%);
+    pointer-events:none;
+  }
+  .hero-card .lbl{font-size:11px;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted-2);}
+  .hero-card .big{
+    font-family:'JetBrains Mono';
+    font-size:40px;
+    font-weight:600;
+    background:linear-gradient(135deg, var(--gold-hi), var(--gold-soft));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    margin:6px 0 4px;
+    letter-spacing:-0.5px;
+  }
+  .hero-card .delta{color:var(--mint);font-size:12.5px;font-weight:500;}
+  .bars{display:flex;align-items:flex-end;gap:6px;height:52px;margin-top:16px;}
+  .bar{flex:1;background:var(--surface-3);border-radius:3px 3px 0 0;position:relative;}
+  .bar.today{background:var(--gold);}
+  .bar span{position:absolute;top:-16px;left:0;right:0;text-align:center;font-size:9px;color:var(--muted-2);}
+
+  .stat-mini{display:flex;flex-direction:column;justify-content:center;}
+  .stat-mini .lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted-2);margin-bottom:8px;}
+  .stat-mini .val{font-family:'JetBrains Mono';font-size:26px;font-weight:600;}
+  .stat-mini .sub{font-size:12px;color:var(--muted);margin-top:4px;}
+
+  .section-head{
+    display:flex;align-items:baseline;justify-content:space-between;
+    margin:28px 0 14px;
+  }
+  .section-head h2{
+    font-family:'Fraunces';font-weight:600;font-size:17px;margin:0;
+  }
+  .section-head a{font-size:12.5px;color:var(--gold-soft);text-decoration:none;font-weight:500;}
+
+  /* ---------- Ledger rows (signature element) ---------- */
+  .ledger{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:var(--shadow-sm);
+  }
+  .ledger-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 20px;
+    border-bottom:1px dashed var(--border-strong);
+    transition:background .18s ease;
+    cursor:pointer;
+  }
+  .ledger-row:hover{background:var(--surface-2);}
+  .ledger-row:last-child{border-bottom:none;}
+  .ledger-row .check{
+    width:20px;height:20px;border-radius:50%;
+    border:1.5px solid var(--border-strong);
+    flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .ledger-row.done .check{background:var(--mint-dim);border-color:var(--mint);color:var(--mint);}
+  .ledger-row .info{flex:1;min-width:0;}
+  .ledger-row .title{font-weight:500;font-size:13.5px;}
+  .ledger-row .meta{font-size:11.5px;color:var(--muted-2);margin-top:2px;}
+  .ledger-row .amt{font-family:'JetBrains Mono';font-weight:600;font-size:14px;color:var(--gold-soft);white-space:nowrap;}
+  .ledger-row .amt.out{color:var(--danger);}
+
+  /* status badge — small icon medallion + label, matches the badges elsewhere */
+  .stamp{
+    font-family:'Instrument Sans';
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:0.7px;
+    text-transform:uppercase;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    white-space:nowrap;
+    color:var(--text);
+  }
+  .stamp .stamp-icon{
+    width:19px;height:19px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 5px rgba(28,26,18,0.18);
+  }
+  .stamp .stamp-icon svg{width:10px;height:10px;color:#FBF8ED;}
+  .stamp.paid .stamp-icon{background:linear-gradient(155deg, #4E8A5E, var(--mint));}
+  .stamp.paid{color:var(--mint);}
+  .stamp.pending .stamp-icon{background:linear-gradient(155deg, var(--foil-soft), var(--foil));}
+  .stamp.pending{color:#8C6D1F;}
+  .stamp.verified .stamp-icon{background:linear-gradient(155deg, var(--gold-hi), var(--gold));}
+  .stamp.verified{color:var(--gold);}
+  .stamp.review .stamp-icon{background:linear-gradient(155deg, #B5503D, var(--danger));}
+  .stamp.review{color:var(--danger);}
+
+  /* ---------- Task browse ---------- */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .chip{
+    padding:7px 14px;border-radius:20px;border:1px solid var(--border-strong);
+    background:var(--surface);color:var(--muted);font-size:12.5px;font-weight:500;
+  }
+  .chip.active{background:var(--gold);color:#211705;border-color:var(--gold);}
+
+  .task-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .task-card{
+    background:linear-gradient(165deg, var(--surface-2), var(--surface));border:1px solid var(--border);border-radius:15px;
+    padding:19px;display:flex;flex-direction:column;gap:10px;
+    box-shadow:var(--shadow-sm);
+    transition:border-color .22s var(--ease), transform .22s var(--ease), box-shadow .22s var(--ease);
+  }
+  .task-card:hover{border-color:var(--border-gold);transform:translateY(-3px);box-shadow:var(--shadow-md);}
+  .task-card-top{display:flex;justify-content:space-between;align-items:flex-start;}
+
+  /* ---------- Video Market ---------- */
+  .video-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:18px;}
+  .video-card{
+    background:linear-gradient(165deg, var(--surface-2), var(--surface));
+    border:1px solid var(--border);border-radius:16px;overflow:hidden;
+    box-shadow:var(--shadow-sm);
+    transition:border-color .22s var(--ease), transform .22s var(--ease), box-shadow .22s var(--ease);
+  }
+  .video-card:hover{border-color:var(--border-gold);transform:translateY(-4px);box-shadow:var(--shadow-md);}
+  .video-thumb{
+    position:relative;aspect-ratio:16/9;
+    background:linear-gradient(135deg, var(--surface-3), var(--bg-alt));
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  .video-thumb img{width:100%;height:100%;object-fit:cover;}
+  .video-thumb .play-badge{
+    width:46px;height:46px;border-radius:50%;
+    background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);
+    display:flex;align-items:center;justify-content:center;color:var(--gold-hi);
+    border:1.5px solid rgba(255,255,255,0.25);
+  }
+  .video-thumb .license-tag{
+    position:absolute;top:10px;left:10px;
+    font-family:'JetBrains Mono';font-size:9.5px;font-weight:700;letter-spacing:0.8px;
+    padding:4px 9px;border-radius:5px;text-transform:uppercase;
+    background:rgba(20,15,7,0.7);backdrop-filter:blur(4px);
+    color:var(--gold-hi);border:1px solid var(--border-gold);
+  }
+  .video-card-body{padding:16px;display:flex;flex-direction:column;gap:8px;}
+  .video-card-body h3{margin:0;font-size:15px;font-weight:600;font-family:'Fraunces';}
+  .video-card-body p{margin:0;font-size:12.5px;color:var(--muted);}
+  .video-card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:4px;}
+  .video-seller{font-size:11.5px;color:var(--muted-2);}
+  .video-price{font-family:'JetBrains Mono';font-weight:700;font-size:17px;color:var(--gold-soft);}
+  .library-item{
+    display:flex;gap:14px;align-items:center;padding:16px;
+    background:linear-gradient(165deg, var(--surface-2), var(--surface));
+    border:1px solid var(--border);border-radius:14px;margin-bottom:12px;
+  }
+  .library-thumb{
+    width:88px;height:56px;border-radius:8px;flex-shrink:0;
+    background:linear-gradient(135deg, var(--surface-3), var(--bg-alt));
+    display:flex;align-items:center;justify-content:center;color:var(--gold);
+    overflow:hidden;
+  }
+  .library-thumb img{width:100%;height:100%;object-fit:cover;}
+  .badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+  .badge-card{
+    background:linear-gradient(165deg, var(--surface-2), var(--surface));border:1px solid var(--border);border-radius:13px;
+    padding:20px 16px;text-align:center;
+    box-shadow:var(--shadow-sm);
+    transition:transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s ease;
+  }
+  .badge-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--border-gold);}
+  .badge-icon-circle{
+    width:46px;height:46px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 12px;
+  }
+  .badge-icon-circle.indigo{background:linear-gradient(155deg, var(--foil-soft), var(--foil));box-shadow:0 5px 16px rgba(169,129,44,0.32);}
+  .badge-icon-circle.mint{background:linear-gradient(155deg, #5B9169, var(--mint));box-shadow:0 5px 14px rgba(63,107,74,0.26);}
+  .badge-icon-circle.mustard{background:linear-gradient(155deg, #B08A2E, #8C6D1F);box-shadow:0 5px 14px rgba(140,109,31,0.26);}
+  .badge-icon-circle svg{color:#F8F4E8;}
+  .badge-title{font-family:'Fraunces';font-weight:600;font-size:14.5px;letter-spacing:0.1px;}
+  .badge-card .cap{font-size:11.5px;color:var(--muted);margin-top:4px;}
+
+  .verified-pill{
+    display:inline-flex;align-items:center;gap:5px;
+    background:var(--mint-dim);color:var(--mint);
+    border:1px solid rgba(63,107,74,0.3);
+    padding:4px 11px 4px 7px;border-radius:20px;
+    font-size:11.5px;font-weight:600;vertical-align:middle;
+  }
+  .verified-pill svg{width:14px;height:14px;flex-shrink:0;}
+
+  .task-cat{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:10.5px;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted-2);
+  }
+  .task-cat svg{width:14px;height:14px;opacity:0.85;flex-shrink:0;}
+  .task-pay{font-family:'JetBrains Mono';font-weight:700;font-size:18px;color:var(--gold-soft);}
+  .task-card h3{margin:0;font-size:15px;font-weight:600;font-family:'Fraunces';}
+  .task-card p{margin:0;font-size:12.5px;color:var(--muted);}
+  .task-card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:4px;}
+  .task-poster{font-size:11.5px;color:var(--muted-2);}
+  .btn{
+    border:none;border-radius:9px;padding:9px 17px;font-size:12.5px;font-weight:600;
+    background:linear-gradient(155deg, var(--gold-hi), var(--gold) 70%);
+    color:#211705;
+    box-shadow:var(--shadow-gold), inset 0 1px 0 rgba(255,255,255,0.4);
+    transition:transform .18s var(--ease), box-shadow .18s var(--ease), filter .18s ease;
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(43,58,103,0.28), inset 0 1px 0 rgba(255,255,255,0.25);filter:brightness(1.05);}
+  .btn:active{transform:translateY(0);}
+  .btn.ghost{background:transparent;border:1px solid var(--border-strong);color:var(--text);box-shadow:none;}
+  .btn.ghost:hover{border-color:var(--gold);color:var(--gold-soft);transform:translateY(-1px);box-shadow:var(--shadow-sm);}
+  .btn.block{width:100%;padding:13px;font-size:13.5px;}
+
+  /* ---------- Wallet / passbook ---------- */
+  .passbook{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:0;
+    overflow:hidden;
+    box-shadow:var(--shadow-lg);
+  }
+  .passbook-head{
+    padding:24px 26px;
+    background:linear-gradient(145deg, var(--surface-3), var(--surface-2));
+    border-bottom:1px solid var(--border-gold);
+    display:flex;justify-content:space-between;align-items:center;
+    position:relative;
+  }
+  .passbook-head::after{
+    content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;
+    background:linear-gradient(90deg, transparent, var(--foil), transparent);
+    opacity:0.6;
+  }
+  .passbook-head .acct{font-family:'JetBrains Mono';font-size:11px;color:var(--muted-2);letter-spacing:1.4px;}
+  .passbook-head h2{font-family:'Fraunces';margin:3px 0 0;font-size:20px;}
+  .passbook-bal{text-align:right;}
+  .passbook-bal .lbl{font-size:10.5px;color:var(--muted-2);text-transform:uppercase;letter-spacing:1.2px;}
+  .passbook-bal .val{
+    font-family:'JetBrains Mono';font-size:25px;font-weight:700;
+    background:linear-gradient(135deg, var(--gold-hi), var(--gold-soft));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+
+  .ptable{width:100%;border-collapse:collapse;}
+  .ptable th{
+    text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:0.8px;
+    color:var(--muted-2);padding:12px 24px;border-bottom:1px solid var(--border);
+  }
+  .ptable td{padding:13px 24px;border-bottom:1px dashed var(--border);font-size:13px;vertical-align:middle;transition:background .18s ease;}
+  .ptable tr:hover td{background:rgba(255,255,255,0.015);}
+  .ptable tr:last-child td{border-bottom:none;}
+  .ptable .desc .title{font-weight:500;}
+  .ptable .desc .date{font-size:11px;color:var(--muted-2);margin-top:2px;}
+  .amt-cell{font-family:'JetBrains Mono';font-weight:600;text-align:right;}
+  .amt-cell.in{color:var(--mint);}
+  .amt-cell.out{color:var(--danger);}
+
+  .wallet-actions{display:flex;gap:12px;padding:20px 24px;border-top:1px solid var(--border);}
+
+  /* ---------- Post task form ---------- */
+  .form-card{background:linear-gradient(165deg, var(--surface-2), var(--surface));border:1px solid var(--border);border-radius:16px;padding:28px;max-width:640px;box-shadow:var(--shadow-md);}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:0.6px;}
+  .field input, .field select, .field textarea{
+    width:100%;background:var(--bg-alt);border:1px solid var(--border-strong);
+    border-radius:9px;padding:11px 13px;color:var(--text);font-size:13.5px;font-family:inherit;
+    transition:border-color .18s ease, box-shadow .18s ease;
+  }
+  .field textarea{resize:vertical;min-height:80px;}
+  .field input:focus, .field select:focus, .field textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(43,58,103,0.14);}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .escrow-note{
+    display:flex;gap:10px;background:var(--mint-dim);border:1px solid rgba(63,107,74,0.32);
+    border-radius:10px;padding:12px 14px;font-size:12px;color:var(--mint);margin-bottom:20px;
+  }
+
+  /* ---------- Profile ---------- */
+  .profile-head{display:flex;gap:20px;align-items:center;margin-bottom:24px;}
+  .profile-avatar{
+    width:72px;height:72px;border-radius:50%;
+    background:linear-gradient(155deg,#25392C,#152018);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces';font-size:28px;font-weight:600;color:var(--mint);
+    border:2px solid var(--border-strong);flex-shrink:0;
+  }
+  .profile-head h2{margin:0 0 4px;font-family:'Fraunces';font-size:22px;}
+  .profile-head .meta{color:var(--muted);font-size:13px;}
+  .stars{color:var(--gold);font-size:14px;letter-spacing:2px;}
+  .settings-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:15px 20px;border-bottom:1px solid var(--border);
+  }
+  .settings-row:last-child{border-bottom:none;}
+  .settings-row .lbl{font-size:13.5px;font-weight:500;}
+  .settings-row .val{font-size:12.5px;color:var(--muted);}
+
+  /* responsive */
+  @media (max-width: 860px){
+    .app{grid-template-columns:1fr;}
+    .sidebar{
+      position:fixed;bottom:0;left:0;right:0;top:auto;
+      flex-direction:row;padding:10px 8px;border-right:none;border-top:1px solid var(--border);
+      z-index:10;overflow-x:auto;gap:10px;
+    }
+    .sidebar .brand, .brand-tag, .mode-toggle{display:none;}
+    nav{flex-direction:row;width:100%;justify-content:space-around;}
+    .nav-item{flex-direction:column;font-size:10px;gap:4px;padding:6px 8px;}
+    main{padding:20px 16px 90px;}
+    .stat-grid{grid-template-columns:1fr;}
+    .task-grid{grid-template-columns:1fr;}
+    .field-row{grid-template-columns:1fr;}
+    .badge-grid{grid-template-columns:1fr 1fr;}
+    .topbar{flex-direction:column;align-items:flex-start;gap:14px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .tab-panel.active{animation:none;}
+    .task-card{transition:none;}
+  }
+</style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
+
+<!-- Login gate: Username and Password login -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="brand-mark">O</div>
+      <div class="brand-name">OnlineDaftar</div>
+    </div>
+    <div class="auth-sub">Sign in to continue — real work, real ledger, real pay</div>
+
+    <div class="auth-tabs" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+      <button class="auth-tab active" id="tabSignIn" onclick="switchLegacyAuthTab('signin')">Sign In</button>
+      <button class="auth-tab" id="tabSignUp" onclick="switchLegacyAuthTab('signup')">Create Account</button>
+    </div>
+
+    <div class="auth-error" id="authError"></div>
+
+    <!-- Sign In Form -->
+    <div class="auth-step active" id="authStepSignIn">
+      <div class="field">
+        <label>Username or Email address</label>
+        <input type="text" id="loginUsername" placeholder="e.g. arjun or priya@example.com" value="priya.s@daftardemo.in">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter password" value="password123">
+      </div>
+      <button class="btn block" onclick="handleLegacyLogin()" id="loginBtn" style="margin-top:12px;">Sign In with Password</button>
+    </div>
+
+    <!-- Sign Up Form -->
+    <div class="auth-step" id="authStepSignUp" style="display:none;">
+      <div class="field">
+        <label>Full Name / Username</label>
+        <input type="text" id="regName" placeholder="e.g. Priya Sharma">
+      </div>
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" id="regEmail" placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label>Password (min 6 chars)</label>
+        <input type="password" id="regPassword" placeholder="••••••••">
+      </div>
+      <div class="field">
+        <label>Role</label>
+        <select id="regRole">
+          <option value="worker">Worker — Complete gigs & earn</option>
+          <option value="poster">Poster — Hire workers with escrow</option>
+        </select>
+      </div>
+      <button class="btn block" onclick="handleLegacyRegister()" id="regBtn" style="margin-top:12px;">Create Account</button>
+    </div>
+
+    <!-- 1-Click Fast Interview Demo -->
+    <div style="margin-top:20px;padding-top:14px;border-top:1px solid var(--border);">
+      <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">
+        ⚡ Fast Interview Demo Access
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button class="btn btn-subtle" onclick="demoLoginLegacy('worker')" style="font-size:11.5px;padding:8px 10px;">Demo as Worker</button>
+        <button class="btn btn-subtle" onclick="demoLoginLegacy('poster')" style="font-size:11.5px;padding:8px 10px;">Demo as Poster</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">K</div>
+      <div class="brand-name">OnlineDaftar</div>
+    </div>
+    <div class="brand-tag">Real work. Real ledger. Real pay.</div>
+
+    <nav>
+      <button class="nav-item active" data-tab="overview" onclick="showTab('overview', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
+        Overview
+      </button>
+      <button class="nav-item" data-tab="browse" onclick="showTab('browse', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Browse Tasks
+      </button>
+      <button class="nav-item" data-tab="wallet" onclick="showTab('wallet', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+        Wallet
+      </button>
+      <button class="nav-item" data-tab="notifications" onclick="showTab('notifications', this)" style="position:relative;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        Notifications
+        <span class="nav-badge" id="notifBadge">3</span>
+      </button>
+      <button class="nav-item" data-tab="post" onclick="showTab('post', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Post a Task
+      </button>
+      <button class="nav-item" data-tab="mytasks" onclick="showTab('mytasks', this); loadPostedTasksFromBackend();">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        My Tasks
+      </button>
+      <button class="nav-item" data-tab="videomarket" onclick="showTab('videomarket', this); loadListingsFromBackend();">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Video Market
+      </button>
+      <button class="nav-item" data-tab="profile" onclick="showTab('profile', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+        Profile
+      </button>
+    </nav>
+
+    <div class="mode-toggle">
+      <div class="mode-toggle-label">Account mode</div>
+      <div class="switch-row">
+        <span id="modeLabel">Worker</span>
+        <div class="switch" id="modeSwitch" onclick="toggleMode()"></div>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- OVERVIEW -->
+    <section class="tab-panel active" id="overview">
+      <div class="topbar">
+        <div>
+          <h1 id="dashGreeting">Namaste 👋</h1>
+          <div class="sub" id="dashSub">Sign in to see your real dashboard</div>
+        </div>
+        <div class="wallet-pill">
+          <div class="avatar" id="dashAvatar">··</div>
+          <div>
+            <div class="lbl">Balance</div>
+            <div class="amt" id="balanceWalletPill">₹14,280</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="card hero-card">
+          <div class="lbl">Earned this month</div>
+          <div class="big" id="earnedThisMonth" data-countup="14280">₹0</div>
+          <div class="delta">↑ ₹2,140 vs last month</div>
+          <div class="bars">
+            <div class="bar" style="height:40%"><span>Mo</span></div>
+            <div class="bar" style="height:55%"><span>Tu</span></div>
+            <div class="bar" style="height:30%"><span>We</span></div>
+            <div class="bar" style="height:70%"><span>Th</span></div>
+            <div class="bar" style="height:45%"><span>Fr</span></div>
+            <div class="bar" style="height:60%"><span>Sa</span></div>
+            <div class="bar today" style="height:85%"><span>Su</span></div>
+          </div>
+        </div>
+        <div class="card stat-mini">
+          <div class="lbl">Tasks completed</div>
+          <div class="val">142</div>
+          <div class="sub">18-day active streak</div>
+        </div>
+        <div class="card stat-mini">
+          <div class="lbl">Rating</div>
+          <div class="val" style="color:var(--gold-soft)">4.9</div>
+          <div class="sub">from 118 reviews</div>
+        </div>
+      </div>
+
+      <div class="section-head">
+        <h2>Today's ledger</h2>
+        <a href="javascript:void(0)" onclick="showTab('browse', document.querySelector('[data-tab=browse]'));">Find more tasks →</a>
+      </div>
+      <div class="ledger" id="todayLedger">
+        <div class="ledger-row done" onclick="openTaskDetail(this)"
+             data-title="Transcribe 12 voice clips — Hindi" data-meta="Nira AI Labs · approved 9:42 AM"
+             data-amt="180" data-status="approved">
+          <div class="check">✓</div>
+          <div class="info">
+            <div class="title">Transcribe 12 voice clips — Hindi</div>
+            <div class="meta">Nira AI Labs · approved 9:42 AM</div>
+          </div>
+          <div class="amt">+₹180</div>
+        </div>
+        <div class="ledger-row done" onclick="openTaskDetail(this)"
+             data-title="App onboarding feedback — 3 screens" data-meta="Setu Fintech · approved 11:05 AM"
+             data-amt="90" data-status="approved">
+          <div class="check">✓</div>
+          <div class="info">
+            <div class="title">App onboarding feedback — 3 screens</div>
+            <div class="meta">Setu Fintech · approved 11:05 AM</div>
+          </div>
+          <div class="amt">+₹90</div>
+        </div>
+        <div class="ledger-row" onclick="openTaskDetail(this)"
+             data-title="Local survey — 25 responses, Ranchi" data-meta="Bazaar Insights · due 6:00 PM"
+             data-amt="350" data-status="pending">
+          <div class="check"></div>
+          <div class="info">
+            <div class="title">Local survey — 25 responses, Ranchi</div>
+            <div class="meta">Bazaar Insights · due 6:00 PM</div>
+          </div>
+          <div class="amt">+₹350</div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- BROWSE TASKS -->
+    <section class="tab-panel" id="browse">
+      <div class="topbar">
+        <div>
+          <h1>Browse tasks</h1>
+          <div class="sub">64 open near Ranchi &amp; remote</div>
+        </div>
+      </div>
+
+      <div class="filters">
+        <div class="chip active" data-cat="All" onclick="filterTasks('All', this)">All</div>
+        <div class="chip" data-cat="Data entry" onclick="filterTasks('Data entry', this)">Data entry</div>
+        <div class="chip" data-cat="Surveys" onclick="filterTasks('Surveys', this)">Surveys</div>
+        <div class="chip" data-cat="Content" onclick="filterTasks('Content', this)">Content</div>
+        <div class="chip" data-cat="Delivery" onclick="filterTasks('Delivery', this)">Delivery</div>
+        <div class="chip" data-cat="Voice / AI training" onclick="filterTasks('Voice / AI training', this)">Voice / AI training</div>
+        <div class="chip" data-cat="Thumbnail Design" onclick="filterTasks('Thumbnail Design', this)">Thumbnail Design</div>
+        <div class="chip" data-cat="Video Editing" onclick="filterTasks('Video Editing', this)">Video Editing</div>
+      </div>
+
+      <div class="task-grid" id="taskGrid">
+        <div class="task-card" data-cat="Voice / AI training" data-pay="220" data-title="Read 20 Bhojpuri sentences aloud">
+          <div class="task-card-top">
+            <span class="task-cat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0014 0v-1"/><path d="M12 18v4M8 22h8"/></svg>Voice / AI training</span>
+            <span class="task-pay">₹220</span>
+          </div>
+          <h3>Read 20 Bhojpuri sentences aloud</h3>
+          <p>Record and upload clean audio clips for a speech-recognition dataset. ~25 min.</p>
+          <div class="task-card-foot">
+            <span class="task-poster">Posted by Vaani AI</span>
+            <button class="btn" onclick="acceptTask(this)">Accept</button>
+          </div>
+        </div>
+
+        <div class="task-card" data-cat="Surveys" data-pay="65" data-title="Grocery pricing survey — 5 shops">
+          <div class="task-card-top">
+            <span class="task-cat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 2h6v3H9z"/><path d="M8 11h8M8 15h5"/></svg>Surveys</span>
+            <span class="task-pay">₹65</span>
+          </div>
+          <h3>Grocery pricing survey — 5 shops</h3>
+          <p>Visit 5 nearby kirana stores, note prices of listed items with photo proof.</p>
+          <div class="task-card-foot">
+            <span class="task-poster">Posted by Bazaar Insights</span>
+            <button class="btn" onclick="acceptTask(this)">Accept</button>
+          </div>
+        </div>
+
+        <div class="task-card" data-cat="Content" data-pay="450" data-title="Proofread 6 product descriptions">
+          <div class="task-card-top">
+            <span class="task-cat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>Content</span>
+            <span class="task-pay">₹450</span>
+          </div>
+          <h3>Proofread 6 product descriptions</h3>
+          <p>Fix grammar and tone for an e-commerce catalogue. Style guide provided.</p>
+          <div class="task-card-foot">
+            <span class="task-poster">Posted by Suvidha Store</span>
+            <button class="btn" onclick="acceptTask(this)">Accept</button>
+          </div>
+        </div>
+
+        <div class="task-card" data-cat="Data entry" data-pay="30" data-title="Digitise 40 handwritten invoices">
+          <div class="task-card-top">
+            <span class="task-cat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M18 13h.01M9 13h6"/></svg>Data entry</span>
+            <span class="task-pay">₹30</span>
+          </div>
+          <h3>Digitise 40 handwritten invoices</h3>
+          <p>Enter invoice fields into a spreadsheet template. Sample provided.</p>
+          <div class="task-card-foot">
+            <span class="task-poster">Posted by Metro Traders</span>
+            <button class="btn" onclick="acceptTask(this)">Accept</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WALLET -->
+    <section class="tab-panel" id="wallet">
+      <div class="topbar">
+        <div>
+          <h1>Wallet</h1>
+          <div class="sub">Your earnings passbook</div>
+        </div>
+      </div>
+
+      <div class="passbook">
+        <div class="passbook-head">
+          <div>
+            <div class="acct" id="passbookAcct">A/C · —</div>
+            <h2 id="passbookName">Your account</h2>
+          </div>
+          <div class="passbook-bal">
+            <div class="lbl">Available balance</div>
+            <div class="val" id="balancePassbook" data-countup="14280">₹0</div>
+          </div>
+        </div>
+
+        <table class="ptable">
+          <thead>
+            <tr><th>Entry</th><th>Category</th><th>Status</th><th style="text-align:right">Amount</th></tr>
+          </thead>
+          <tbody id="passbookBody">
+            <tr>
+              <td class="desc"><div class="title">Transcribe 12 voice clips</div><div class="date">14 Jul, 9:42 AM</div></td>
+              <td>Voice / AI</td>
+              <td><span class="stamp paid"><span class="stamp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>PAID</span></td>
+              <td class="amt-cell in">+₹180</td>
+            </tr>
+            <tr>
+              <td class="desc"><div class="title">Onboarding feedback</div><div class="date">14 Jul, 11:05 AM</div></td>
+              <td>Content</td>
+              <td><span class="stamp paid"><span class="stamp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>PAID</span></td>
+              <td class="amt-cell in">+₹90</td>
+            </tr>
+            <tr>
+              <td class="desc"><div class="title">Withdrawal to UPI</div><div class="date">13 Jul, 7:20 PM</div></td>
+              <td>Withdrawal</td>
+              <td><span class="stamp verified"><span class="stamp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>SENT</span></td>
+              <td class="amt-cell out">−₹5,000</td>
+            </tr>
+            <tr>
+              <td class="desc"><div class="title">Grocery pricing survey</div><div class="date">13 Jul, 4:10 PM</div></td>
+              <td>Surveys</td>
+              <td><span class="stamp pending"><span class="stamp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>IN ESCROW</span></td>
+              <td class="amt-cell in">+₹65</td>
+            </tr>
+            <tr>
+              <td class="desc"><div class="title">Invoice digitisation batch</div><div class="date">12 Jul, 2:30 PM</div></td>
+              <td>Data entry</td>
+              <td><span class="stamp review"><span class="stamp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>IN REVIEW</span></td>
+              <td class="amt-cell in">+₹30</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="wallet-actions">
+          <button class="btn" style="flex:1" onclick="startWithdraw()">Withdraw to UPI</button>
+          <button class="btn ghost" style="flex:1" onclick="downloadStatement()">Download statement</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section class="tab-panel" id="notifications">
+      <div class="topbar">
+        <div>
+          <h1>Notifications</h1>
+          <div class="sub" id="notifSub">3 unread</div>
+        </div>
+      </div>
+
+      <div class="notif-actions">
+        <button class="btn ghost" onclick="markAllRead()">Mark all as read</button>
+      </div>
+
+      <div class="notif-day-label">Today</div>
+      <div class="ledger">
+        <div class="notif-row unread">
+          <div class="notif-icon mint">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div class="notif-body">
+            <div class="title"><b>₹350 approved</b> for "Local survey — 25 responses, Ranchi" by Bazaar Insights</div>
+            <div class="time">12 minutes ago</div>
+          </div>
+        </div>
+        <div class="notif-row unread">
+          <div class="notif-icon indigo">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </div>
+          <div class="notif-body">
+            <div class="title">New task match: <b>"Read 20 Bhojpuri sentences aloud"</b> — ₹220, near you</div>
+            <div class="time">48 minutes ago</div>
+          </div>
+        </div>
+        <div class="notif-row unread">
+          <div class="notif-icon mustard">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.7 1.5 6.8L12 17l-6.2 3.5 1.5-6.8-5.1-4.7 6.9-.7z"/></svg>
+          </div>
+          <div class="notif-body">
+            <div class="title">You earned the <b>Top Rated</b> badge — 4.8+ average over 50 tasks 🎉</div>
+            <div class="time">2 hours ago</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notif-day-label">Earlier this week</div>
+      <div class="ledger">
+        <div class="notif-row">
+          <div class="notif-icon indigo">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </div>
+          <div class="notif-body">
+            <div class="title">Withdrawal of <b>₹5,000</b> to HDFC •••• 4471 was successful</div>
+            <div class="time">Monday, 7:20 PM</div>
+          </div>
+        </div>
+        <div class="notif-row">
+          <div class="notif-icon danger">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          </div>
+          <div class="notif-body">
+            <div class="title">Deadline reminder: <b>"Digitise 40 handwritten invoices"</b> is due in 3 hours</div>
+            <div class="time">Sunday, 3:00 PM</div>
+          </div>
+        </div>
+        <div class="notif-row">
+          <div class="notif-icon mint">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.7 1.5 6.8L12 17l-6.2 3.5 1.5-6.8-5.1-4.7 6.9-.7z"/></svg>
+          </div>
+          <div class="notif-body">
+            <div class="title">Setu Fintech rated your work <b>5 stars</b> on "App onboarding feedback"</div>
+            <div class="time">Sunday, 11:10 AM</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- POST A TASK -->
+    <section class="tab-panel" id="post">
+      <div class="topbar">
+        <div>
+          <h1>Post a task</h1>
+          <div class="sub">Fund escrow now — pay is released only after you approve the work</div>
+        </div>
+      </div>
+
+      <div class="escrow-note">
+        🔒 Your payment is held safely in escrow until you approve the submitted work. Workers only get paid once you're satisfied.
+      </div>
+
+      <div class="form-card">
+        <div class="field">
+          <label>Task title</label>
+          <input type="text" id="postTitle" placeholder="e.g. Proofread 6 product descriptions">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Category</label>
+            <select id="postCategory">
+              <option>Data entry</option>
+              <option>Surveys</option>
+              <option>Content</option>
+              <option>Delivery</option>
+              <option>Voice / AI training</option>
+              <option>Thumbnail Design</option>
+              <option>Video Editing</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Pay amount (₹)</label>
+            <input type="number" id="postAmount" placeholder="450" oninput="updatePostButton()">
+          </div>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <textarea id="postDescription" placeholder="What should the worker do? Attach any reference files or style guides."></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Deadline</label>
+            <input type="date" id="postDeadline">
+          </div>
+          <div class="field">
+            <label>Proof required</label>
+            <select id="postProofType">
+              <option value="photo">Photo upload</option>
+              <option value="file">File / document</option>
+              <option value="link">Link</option>
+              <option value="none">None — self-declared</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn block" id="postSubmitBtn" onclick="submitPostTask()">Post task &amp; fund escrow — ₹450</button>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <!-- MY TASKS (poster review) -->
+    <section class="tab-panel" id="mytasks">
+      <div class="topbar">
+        <div>
+          <h1>My posted tasks</h1>
+          <div class="sub">Review submitted proof and release payment</div>
+        </div>
+      </div>
+      <div id="myTasksList">
+        <div style="text-align:center;padding:50px 20px;color:var(--muted);">
+          <div style="font-family:'Fraunces';font-size:17px;color:var(--text);margin-bottom:8px;">No posted tasks yet</div>
+          <div style="font-size:13px;">Post a task in <b>Poster mode</b> to see it and its submissions here.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIDEO MARKET -->
+    <section class="tab-panel" id="videomarket">
+      <div class="topbar">
+        <div>
+          <h1>Video Market</h1>
+          <div class="sub">License stock footage, or book an editor's turnaround package</div>
+        </div>
+      </div>
+
+      <div class="filters" id="videoFilters">
+        <div class="chip active" data-vcat="All" onclick="filterListings('All', this)">All</div>
+        <div class="chip" data-vcat="Stock Footage" onclick="filterListings('Stock Footage', this)">Stock Footage</div>
+        <div class="chip" data-vcat="Editor Package" onclick="filterListings('Editor Package', this)">Editor Packages</div>
+      </div>
+
+      <div class="video-grid" id="videoGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--muted);">
+          <div style="font-family:'Fraunces';font-size:17px;color:var(--text);margin-bottom:8px;">Nothing listed yet</div>
+          <div style="font-size:13px;">Be the first to list stock footage or an editing package below.</div>
+        </div>
+      </div>
+
+      <div class="section-head"><h2>List something for sale</h2></div>
+      <div class="form-card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-listtype="footage" onclick="switchListingType('footage', this)">Stock Footage</button>
+          <button class="auth-tab" data-listtype="editor_package" onclick="switchListingType('editor_package', this)">Editor Package</button>
+        </div>
+        <div class="field">
+          <label>Title</label>
+          <input type="text" id="listTitle" placeholder="e.g. Drone shots of Mumbai skyline, 4K">
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <textarea id="listDescription" placeholder="What's included, resolution, duration, turnaround time, etc."></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Price (₹)</label>
+            <input type="number" id="listPrice" placeholder="500">
+          </div>
+          <div class="field">
+            <label>License</label>
+            <select id="listLicense" onchange="toggleRentalDays()">
+              <option value="single_use">Single use</option>
+              <option value="unlimited">Unlimited use</option>
+              <option value="time_limited">Time-limited rental</option>
+            </select>
+          </div>
+        </div>
+        <div class="field" id="rentalDaysField" style="display:none">
+          <label>Rental length (days)</label>
+          <input type="number" id="listRentalDays" placeholder="7">
+        </div>
+        <div class="field">
+          <label>Preview image/thumbnail URL</label>
+          <input type="text" id="listPreviewUrl" placeholder="https://... (shown to browsers before purchase)">
+        </div>
+        <div class="field">
+          <label>File / delivery link</label>
+          <input type="text" id="listFileUrl" placeholder="https://... (only revealed to the buyer after payment)">
+        </div>
+        <button class="btn block" onclick="submitListing()" id="submitListingBtn">List for sale</button>
+      </div>
+
+      <div class="section-head"><h2>My library (purchased)</h2></div>
+      <div id="myLibraryList">
+        <div style="text-align:center;padding:30px 20px;color:var(--muted);font-size:13px;">
+          Nothing purchased yet — buy a listing above to see it here.
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="profile">
+      <div class="topbar">
+        <div>
+          <h1>Profile</h1>
+          <div class="sub">How posters and workers see you</div>
+        </div>
+      </div>
+
+      <div class="profile-head">
+        <div class="profile-avatar" id="profileAvatar">PS</div>
+        <div>
+          <h2 id="profileName">Your name
+            <span class="verified-pill" id="profileVerifiedPill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.35 8.87a1 1 0 01-.6-.01C8.5 20.5 5 18 5 13V6a1 1 0 011-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 011.52 0C15.51 3.81 18 5 20 5a1 1 0 011 1z"/><path d="M9 12l2 2 4-4"/></svg>
+              <span id="profileVerifiedLabel">Verified</span>
+            </span>
+          </h2>
+          <div class="meta" id="profileMeta">Member since —</div>
+          <div class="stars" id="profileStars">☆☆☆☆☆ <span style="color:var(--muted);font-size:12.5px;">No ratings yet</span></div>
+        </div>
+      </div>
+
+      <div class="section-head"><h2>Badges earned</h2></div>
+      <div class="badge-grid">
+        <div class="badge-card">
+          <div class="badge-icon-circle mint">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.35 8.87a1 1 0 01-.6-.01C8.5 20.5 5 18 5 13V6a1 1 0 011-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 011.52 0C15.51 3.81 18 5 20 5a1 1 0 011 1z"/><path d="M9 12l2 2 4-4"/></svg>
+          </div>
+          <div class="badge-title">Verified</div>
+          <div class="cap">KYC &amp; bank linked</div>
+        </div>
+        <div class="badge-card">
+          <div class="badge-icon-circle indigo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.7 1.5 6.8L12 17l-6.2 3.5 1.5-6.8-5.1-4.7 6.9-.7z"/></svg>
+          </div>
+          <div class="badge-title">Top Rated</div>
+          <div class="cap">4.8+ over 50 tasks</div>
+        </div>
+        <div class="badge-card">
+          <div class="badge-icon-circle mustard">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="6" height="10" rx="1"/><rect x="9" y="5" width="6" height="15" rx="1"/><rect x="15" y="13" width="6" height="7" rx="1"/></svg>
+          </div>
+          <div class="badge-title" id="profileTaskCountTitle">0 Tasks</div>
+          <div class="cap">Keep going</div>
+        </div>
+      </div>
+
+      <div class="section-head"><h2>Account details</h2></div>
+      <div class="ledger">
+        <div class="settings-row"><span class="lbl">Mobile</span><span class="val" id="profilePhoneVal">Not linked</span></div>
+        <div class="settings-row"><span class="lbl">Email</span><span class="val" id="profileEmailVal">Not linked</span></div>
+        <div class="settings-row"><span class="lbl">Payout method</span><span class="val" id="profilePayoutVal">Not linked</span></div>
+      </div>
+
+      <div class="section-head"><h2>About you</h2></div>
+      <div class="form-card">
+        <div class="field">
+          <label>Short description</label>
+          <textarea id="profileBio" placeholder="e.g. Freelance data-entry specialist, available evenings and weekends."></textarea>
+        </div>
+        <button class="btn block" onclick="saveProfileBio()" id="saveBioBtn">Save changes</button>
+      </div>
+
+      <div class="section-head"><h2>Add another way to sign in</h2></div>
+      <div class="form-card">
+        <div class="auth-demo-note show" style="color:var(--muted);background:var(--surface-2);border-color:var(--border-strong);margin-bottom:16px;">
+          Signed up with mobile? Add your email here (or vice versa) so you can log in either way.
+        </div>
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-linkmethod="mobile" onclick="switchLinkMethod('mobile', this)">Add mobile</button>
+          <button class="auth-tab" data-linkmethod="email" onclick="switchLinkMethod('email', this)">Add email</button>
+        </div>
+        <div id="linkFieldsMobile">
+          <div class="field"><label>Mobile number</label><input type="tel" id="linkMobileInput" placeholder="98765 43210" maxlength="10"></div>
+        </div>
+        <div id="linkFieldsEmail" style="display:none">
+          <div class="field"><label>Email address</label><input type="email" id="linkEmailInput" placeholder="you@example.com"></div>
+        </div>
+        <button class="btn block" onclick="sendLinkOtp()" id="sendLinkOtpBtn">Send verification code</button>
+        <div id="linkOtpStep" style="display:none;margin-top:16px;">
+          <div class="field"><label>Enter the code</label><input type="text" id="linkOtpCode" placeholder="6-digit code" maxlength="6"></div>
+          <button class="btn block" onclick="verifyLinkOtp()">Verify &amp; link</button>
+        </div>
+      </div>
+
+      <div class="section-head"><h2>Link a payout method</h2></div>
+      <div class="form-card">
+        <div class="auth-demo-note show" style="color:var(--muted);background:var(--surface-2);border-color:var(--border-strong);margin-bottom:16px;">
+          🔒 Your account number is sent straight to Razorpay and tokenized — we only ever store the last 4 digits.
+        </div>
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-paymethod="bank" onclick="switchPayoutMethod('bank', this)">Bank account</button>
+          <button class="auth-tab" data-paymethod="upi" onclick="switchPayoutMethod('upi', this)">UPI</button>
+        </div>
+        <div id="payoutFieldsBank">
+          <div class="field">
+            <label>Account holder name</label>
+            <input type="text" id="bankHolderName" placeholder="As per bank records">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Account number</label>
+              <input type="text" id="bankAccountNumber" placeholder="0000000000">
+            </div>
+            <div class="field">
+              <label>IFSC code</label>
+              <input type="text" id="bankIfsc" placeholder="HDFC0000123" style="text-transform:uppercase;">
+            </div>
+          </div>
+          <button class="btn block" onclick="linkBankAccount()" id="linkBankBtn">Link bank account</button>
+        </div>
+        <div id="payoutFieldsUpi" style="display:none">
+          <div class="field">
+            <label>UPI ID</label>
+            <input type="text" id="upiIdInput" placeholder="yourname@okhdfc">
+          </div>
+          <button class="btn block" onclick="linkUpiAccount()" id="linkUpiBtn">Link UPI ID</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  function showTab(id, btn){
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(btn) btn.classList.add('active');
+  }
+  function toggleMode(){
+    const sw = document.getElementById('modeSwitch');
+    const lbl = document.getElementById('modeLabel');
+    sw.classList.toggle('on');
+    const isPoster = sw.classList.contains('on');
+    lbl.textContent = isPoster ? 'Poster' : 'Worker';
+    document.body.classList.toggle('poster-mode', isPoster);
+    // Switch to the relevant tab using the same cross-fade every nav click
+    // uses, so there's no layout jump — only the content panel fades,
+    // the sidebar and topbar frame stay exactly where they are.
+    const targetTab = isPoster ? 'post' : 'browse';
+    const navBtn = document.querySelector(`[data-tab="${targetTab}"]`);
+    showTab(targetTab, navBtn);
+  }
+
+  // Premium count-up reveal for key money figures
+  function countUp(el, target, prefix, duration){
+    const start = performance.now();
+    function tick(now){
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const val = Math.round(target * eased);
+      el.textContent = prefix + val.toLocaleString('en-IN');
+      if(p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  window.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-countup]').forEach(el => {
+      const target = parseInt(el.getAttribute('data-countup'), 10);
+      countUp(el, target, '₹', 900);
+    });
+  });
+
+  // ===================== App state =====================
+  const state = { balance: 14280 };
+
+  // ===================== Backend connection =====================
+  // Point this at your running backend (see the onlinedaftar-backend
+  // starter kit). Leave the backend not running and the app works fully
+  // in simulated/demo mode — no server required to preview this file.
+  const API_BASE = 'https://onlinedaftar-backend.onrender.com/api';
+  let authToken = null;
+
+  function authHeaders(){
+    return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` };
+  }
+
+  async function loadTasksFromBackend(){
+    try{
+      const res = await fetch(`${API_BASE}/tasks`);
+      if(!res.ok) return;
+      const tasks = await res.json();
+      const grid = document.getElementById('taskGrid');
+      grid.innerHTML = '';
+
+      if(tasks.length === 0){
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--muted);">
+            <div style="font-family:'Fraunces';font-size:17px;color:var(--text);margin-bottom:8px;">No open tasks yet</div>
+            <div style="font-size:13px;">You're connected to your real backend, but no task has been posted and fully paid for yet.<br>
+            Switch to <b>Poster mode</b> and post one to see it appear here.</div>
+          </div>`;
+        return;
+      }
+
+      tasks.forEach(t => {
+        const card = document.createElement('div');
+        card.className = 'task-card';
+        card.setAttribute('data-cat', t.category);
+        card.setAttribute('data-pay', Math.round(t.pay_paise / 100));
+        card.setAttribute('data-title', t.title);
+        card.setAttribute('data-task-id', t.id);
+        card.innerHTML = `
+          <div class="task-card-top">
+            <span class="task-cat">${t.category}</span>
+            <span class="task-pay">₹${Math.round(t.pay_paise / 100).toLocaleString('en-IN')}</span>
+          </div>
+          <h3>${t.title}</h3>
+          <p>${t.description || ''}</p>
+          <div class="task-card-foot">
+            <span class="task-poster">Posted by ${t.poster_name}</span>
+            <button class="btn" onclick="acceptTask(this)">Accept</button>
+          </div>`;
+        grid.appendChild(card);
+      });
+    } catch(e){ /* backend not running — keep the static demo tasks visible */ }
+  }
+
+  async function loadWalletFromBackend(){
+    try{
+      const res = await fetch(`${API_BASE}/wallet`, { headers: authHeaders() });
+      if(!res.ok) return;
+      const data = await res.json();
+      state.balance = Math.round(data.balancePaise / 100);
+      updateBalanceUI();
+      renderRealWallet(data.transactions || []);
+    } catch(e){ /* backend not running — keep the demo balance and demo entries */ }
+  }
+
+  function renderRealWallet(transactions){
+    // "Earned this month" — sum of escrow_release payments (money you
+    // actually got paid) that landed in the current calendar month.
+    const now = new Date();
+    const monthEarnedPaise = transactions
+      .filter(t => t.type === 'escrow_release' && t.status === 'paid')
+      .filter(t => {
+        const d = new Date(t.created_at);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      })
+      .reduce((sum, t) => sum + Number(t.amount_paise), 0);
+    const earnedEl = document.getElementById('earnedThisMonth');
+    if(earnedEl) earnedEl.textContent = '₹' + Math.round(monthEarnedPaise/100).toLocaleString('en-IN');
+
+    if(transactions.length === 0) return; // nothing real yet — leave demo passbook rows as filler
+
+    // Real passbook rows — completely replaces the static demo entries.
+    const passbookBody = document.getElementById('passbookBody');
+    passbookBody.innerHTML = transactions.map(t => {
+      const amt = Math.round(t.amount_paise / 100).toLocaleString('en-IN');
+      const isIncoming = t.type === 'escrow_release';
+      const label = t.task_title ? (t.task_title.length > 34 ? t.task_title.slice(0,34)+'…' : t.task_title) :
+                    (t.type === 'withdrawal' ? 'Withdrawal to UPI' :
+                     t.type === 'escrow_fund' ? 'Escrow funded' : t.type);
+      const date = new Date(t.created_at).toLocaleDateString('en-IN', {day:'numeric', month:'short'}) + ', ' +
+                   new Date(t.created_at).toLocaleTimeString('en-IN', {hour:'numeric', minute:'2-digit'});
+      let stampClass = 'pending', stampLabel = t.status.toUpperCase(), stampIcon = iconClock();
+      if(t.status === 'paid'){ stampClass = 'paid'; stampLabel = 'PAID'; stampIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'; }
+      else if(t.type === 'withdrawal'){ stampClass = 'verified'; stampLabel = 'SENT'; stampIcon = iconArrow(); }
+      return `
+        <tr>
+          <td class="desc"><div class="title">${label}</div><div class="date">${date}</div></td>
+          <td>${t.type.replace('_',' ')}</td>
+          <td><span class="stamp ${stampClass}">${stampIcon}${stampLabel}</span></td>
+          <td class="amt-cell ${isIncoming ? 'in' : 'out'}">${isIncoming ? '+' : '−'}₹${amt}</td>
+        </tr>`;
+    }).join('');
+
+    // Dashboard "Today's ledger" — mirror the 3 most recent real entries.
+    const todayLedger = document.getElementById('todayLedger');
+    const recent = transactions.slice(0, 3);
+    todayLedger.innerHTML = recent.map(t => {
+      const amt = Math.round(t.amount_paise / 100).toLocaleString('en-IN');
+      const isDone = t.status === 'paid';
+      const label = t.task_title || (t.type === 'withdrawal' ? 'Withdrawal to UPI' : t.type.replace('_',' '));
+      const time = new Date(t.created_at).toLocaleTimeString('en-IN', {hour:'numeric', minute:'2-digit'});
+      return `
+        <div class="ledger-row ${isDone ? 'done' : ''}">
+          <div class="check">${isDone ? '✓' : ''}</div>
+          <div class="info">
+            <div class="title">${label}</div>
+            <div class="meta">${t.status} · ${time}</div>
+          </div>
+          <div class="amt">${t.type === 'escrow_release' ? '+' : ''}₹${amt}</div>
+        </div>`;
+    }).join('');
+  }
+
+  // ===================== Profile (real user data) =====================
+  async function loadProfileFromBackend(){
+    try{
+      const [meRes, bankRes] = await Promise.all([
+        fetch(`${API_BASE}/auth/me`, { headers: authHeaders() }),
+        fetch(`${API_BASE}/bank-account`, { headers: authHeaders() })
+      ]);
+      if(meRes.ok){
+        const me = await meRes.json();
+        const initials = (me.name || '?').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+        const firstName = (me.name || 'there').split(' ')[0];
+
+        document.getElementById('profileAvatar').textContent = initials;
+        document.querySelector('#profileName').childNodes[0].textContent = me.name + ' ';
+        document.getElementById('profilePhoneVal').textContent = me.phone || 'Not linked';
+        document.getElementById('profileEmailVal').textContent = me.email || 'Not linked';
+        const joined = new Date(me.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+        document.getElementById('profileMeta').textContent = 'Member since ' + joined;
+        document.getElementById('profileBio').value = me.bio || '';
+
+        const verifiedPill = document.getElementById('profileVerifiedPill');
+        document.getElementById('profileVerifiedLabel').textContent = me.kyc_verified ? 'Verified' : 'Unverified';
+        verifiedPill.style.opacity = me.kyc_verified ? '1' : '0.5';
+
+        if(me.rating_count > 0){
+          const fullStars = Math.round(me.rating_avg);
+          document.getElementById('profileStars').innerHTML =
+            '★'.repeat(fullStars) + '☆'.repeat(5-fullStars) +
+            ` <span style="color:var(--muted);font-size:12.5px;">${me.rating_avg} · ${me.rating_count} reviews</span>`;
+        } else {
+          document.getElementById('profileStars').innerHTML =
+            `☆☆☆☆☆ <span style="color:var(--muted);font-size:12.5px;">No ratings yet</span>`;
+        }
+
+        document.getElementById('dashGreeting').textContent = 'Namaste, ' + firstName;
+        document.getElementById('dashSub').textContent = me.phone ? ('+91 ' + me.phone) : (me.email || 'Welcome back');
+        document.getElementById('dashAvatar').textContent = initials;
+
+        document.getElementById('passbookName').textContent = me.name;
+        document.getElementById('passbookAcct').textContent = 'A/C · ' + me.id.slice(0, 8).toUpperCase();
+      }
+      if(bankRes.ok){
+        const bank = await bankRes.json();
+        const payoutVal = document.getElementById('profilePayoutVal');
+        if(bank.linked){
+          payoutVal.textContent = bank.upiId ? bank.upiId : ('•••• ' + bank.bankAccountLast4);
+        } else {
+          payoutVal.textContent = 'Not linked';
+        }
+        if(!bank.linked && !document.getElementById('payoutBanner')){
+          const banner = document.createElement('div');
+          banner.id = 'payoutBanner';
+          banner.className = 'escrow-note';
+          banner.style.marginBottom = '20px';
+          banner.innerHTML = `💳 You haven't linked a payout method yet — <a href="javascript:void(0)" onclick="showTab('profile', document.querySelector('[data-tab=profile]'))" style="color:var(--mint);text-decoration:underline;">add a bank account or UPI ID</a> so you can withdraw earnings.`;
+          const overview = document.getElementById('overview');
+          overview.insertBefore(banner, overview.querySelector('.stat-grid'));
+        }
+      }
+    } catch(e){ /* backend not running — profile stays as demo placeholder */ }
+  }
+
+  function switchPayoutMethod(method, tabEl){
+    tabEl.closest('.form-card').querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+    document.getElementById('payoutFieldsBank').style.display = method === 'bank' ? 'block' : 'none';
+    document.getElementById('payoutFieldsUpi').style.display = method === 'upi' ? 'block' : 'none';
+  }
+
+  async function saveProfileBio(){
+    if(!authToken){ showToast('Log in first.'); return; }
+    const bio = document.getElementById('profileBio').value.trim();
+    const btn = document.getElementById('saveBioBtn');
+    btn.textContent = 'Saving…'; btn.disabled = true;
+    try{
+      const res = await fetch(`${API_BASE}/auth/profile`, {
+        method: 'PATCH', headers: authHeaders(),
+        body: JSON.stringify({ bio })
+      });
+      if(res.ok){ showToast('Profile updated.'); }
+      else { const data = await res.json().catch(()=>({})); showToast(data.error || 'Could not save.'); }
+    } catch(e){ showToast('Backend unreachable.'); }
+    btn.textContent = 'Save changes'; btn.disabled = false;
+  }
+
+  // ===================== Add a second sign-in method =====================
+  let linkMethod = 'mobile';
+  let linkIdentifier = '';
+
+  function switchLinkMethod(method, tabEl){
+    linkMethod = method;
+    tabEl.closest('.form-card').querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+    document.getElementById('linkFieldsMobile').style.display = method === 'mobile' ? 'block' : 'none';
+    document.getElementById('linkFieldsEmail').style.display = method === 'email' ? 'block' : 'none';
+    document.getElementById('linkOtpStep').style.display = 'none';
+  }
+
+  async function sendLinkOtp(){
+    if(!authToken){ showToast('Log in first.'); return; }
+    linkIdentifier = linkMethod === 'mobile'
+      ? document.getElementById('linkMobileInput').value.trim()
+      : document.getElementById('linkEmailInput').value.trim();
+    if(!linkIdentifier){ showToast('Enter a value first.'); return; }
+
+    const btn = document.getElementById('sendLinkOtpBtn');
+    btn.textContent = 'Sending…'; btn.disabled = true;
+    try{
+      const res = await fetch(`${API_BASE}/otp/link-send`, {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ identifier: linkIdentifier, method: linkMethod })
+      });
+      const data = await res.json();
+      if(!res.ok){ showToast(data.error || 'Could not send code.'); }
+      else {
+        showToast('Code sent — check your ' + (linkMethod === 'email' ? 'inbox' : 'phone') + '.');
+        document.getElementById('linkOtpStep').style.display = 'block';
+      }
+    } catch(e){ showToast('Backend unreachable.'); }
+    btn.textContent = 'Send verification code'; btn.disabled = false;
+  }
+
+  async function verifyLinkOtp(){
+    const code = document.getElementById('linkOtpCode').value.trim();
+    if(code.length !== 6){ showToast('Enter the full 6-digit code.'); return; }
+    try{
+      const res = await fetch(`${API_BASE}/otp/link-verify`, {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ identifier: linkIdentifier, method: linkMethod, code })
+      });
+      const data = await res.json();
+      if(!res.ok){ showToast(data.error || 'Could not verify.'); return; }
+      showToast((linkMethod === 'email' ? 'Email' : 'Mobile') + ' linked to your account.');
+      document.getElementById('linkOtpStep').style.display = 'none';
+      document.getElementById('linkOtpCode').value = '';
+      loadProfileFromBackend();
+    } catch(e){ showToast('Backend unreachable.'); }
+  }
+
+  async function linkBankAccount(){
+    if(!authToken){ showToast('Log in first to link a payout account.'); return; }
+    const accountHolderName = document.getElementById('bankHolderName').value.trim();
+    const accountNumber = document.getElementById('bankAccountNumber').value.trim();
+    const ifsc = document.getElementById('bankIfsc').value.trim();
+    const btn = document.getElementById('linkBankBtn');
+    btn.textContent = 'Linking…'; btn.disabled = true;
+    try{
+      const res = await fetch(`${API_BASE}/bank-account/link-bank`, {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ accountHolderName, accountNumber, ifsc })
+      });
+      const data = await res.json();
+      if(!res.ok){ showToast(data.error || 'Could not link bank account.'); }
+      else {
+        showToast('Bank account linked — ending in ' + data.last4);
+        document.getElementById('bankAccountNumber').value = '';
+        loadProfileFromBackend();
+      }
+    } catch(e){ showToast('Backend unreachable — could not link account.'); }
+    btn.textContent = 'Link bank account'; btn.disabled = false;
+  }
+
+  async function linkUpiAccount(){
+    if(!authToken){ showToast('Log in first to link a payout account.'); return; }
+    const upiId = document.getElementById('upiIdInput').value.trim();
+    const btn = document.getElementById('linkUpiBtn');
+    btn.textContent = 'Linking…'; btn.disabled = true;
+    try{
+      const res = await fetch(`${API_BASE}/bank-account/link-upi`, {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ upiId })
+      });
+      const data = await res.json();
+      if(!res.ok){ showToast(data.error || 'Could not link UPI.'); }
+      else {
+        showToast('UPI linked: ' + data.upiId);
+        loadProfileFromBackend();
+      }
+    } catch(e){ showToast('Backend unreachable — could not link UPI.'); }
+    btn.textContent = 'Link UPI ID'; btn.disabled = false;
+  }
+
+  // ===================== My Tasks (proof review / approve / reject) =====================
+  // ===================== Video Market =====================
+  let listingType = 'footage';
+
+  async function loadListingsFromBackend(){
+    const grid = document.getElementById('videoGrid');
+    try{
+      const res = await fetch(`${API_BASE}/listings`);
+      if(!res.ok) return;
+      const listings = await res.json();
+      if(listings.length === 0) return; // keep empty-state placeholder
+
+      grid.innerHTML = listings.map(l => {
+        const price = Math.round(l.price_paise/100).toLocaleString('en-IN');
+        const licenseLabel = l.license_type === 'unlimited' ? 'Unlimited' :
+                              l.license_type === 'time_limited' ? (l.rental_days + '-day rental') : 'Single use';
+        const thumb = l.preview_url
+          ? `<img src="${l.preview_url}" alt="">`
+          : `<div class="play-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>`;
+        return `
+          <div class="video-card" data-vcat="${l.category}">
+            <div class="video-thumb">
+              ${thumb}
+              <span class="license-tag">${licenseLabel}</span>
+            </div>
+            <div class="video-card-body">
+              <h3>${l.title}</h3>
+              <p>${l.description || ''}</p>
+              <div class="video-card-foot">
+                <span class="video-seller">${l.category} · ${l.seller_name}</span>
+                <span class="video-price">₹${price}</span>
+              </div>
+              <button class="btn block" onclick="buyListing('${l.id}', '${l.title.replace(/'/g,"\\'")}', ${l.price_paise})">Buy / License</button>
+            </div>
+          </div>`;
+      }).join('');
+    } catch(e){ /* backend unreachable — keep empty state */ }
+    loadMyLibrary();
+  }
+
+  function filterListings(cat, chipEl){
+    document.querySelectorAll('#videoFilters .chip').forEach(c => c.classList.remove('active'));
+    chipEl.classList.add('active');
+    document.querySelectorAll('#videoGrid .video-card').forEach(card => {
+      const c = card.getAttribute('data-vcat');
+      card.style.display = (cat === 'All' || c === cat) ? '' : 'none';
+    });
+  }
+
+  function switchListingType(type, tabEl){
+    listingType = type;
+    tabEl.closest('.form-card').querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+  }
+
+  function toggleRentalDays(){
+    const isRental = document.getElementById('listLicense').value === 'time_limited';
+    document.getElementById('rentalDaysField').style.display = isRental ? 'block' : 'none';
+  }
+
+  async function submitListing(){
+    if(!authToken){ showToast('Log in first to list something for sale.'); return; }
+    const title = document.getElementById('listTitle').value.trim();
+    const description = document.getElementById('listDescription').value.trim();
+    const price = parseInt(document.getElementById('listPrice').value, 10) || 0;
+    const licenseType = document.getElementById('listLicense').value;
+    const rentalDays = parseInt(document.getElementById('listRentalDays').value, 10) || null;
+    const previewUrl = document.getElementById('listPreviewUrl').value.trim();
+    const fileUrl = document.getElementById('listFileUrl').value.trim();
+    const category = listingType === 'footage' ? 'Stock Footage' : 'Editor Package';
+
+    if(!title || price <= 0){ showToast('Add a title and a price above ₹0.'); return; }
+    if(licenseType === 'time_limited' && !rentalDays){ showToast('Enter how many days the rental lasts.'); return; }
+
+    const btn = document.getElementById('submitListingBtn');
+    btn.textContent = 'Listing…'; btn.disabled = true;
+    try{
+      const res = await fetch(`${API_BASE}/listings`, {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ type: listingType, title, description, category, pricePaise: price*100, licenseType, rentalDays, previewUrl, fileUrl })
+      });
+      const data = await res.json();
+      if(!res.ok){ showToast(data.error || 'Could not list.'); }
+      else {
+        showToast('Listed — now visible in the marketplace.');
+        document.getElementById('listTitle').value = '';
+        document.getElementById('listDescription').value = '';
+        document.getElementById('listPrice').value = '';
+        document.getElementById('listPreviewUrl').value = '';
+        document.getElementById('listFileUrl').value = '';
+        loadListingsFromBackend();
+      }
+    } catch(e){ showToast('Backend unreachable.'); }
+    btn.textContent = 'List for sale'; btn.disabled = false;
+  }
+
+  async function buyListing(listingId, title, pricePaise){
+    if(!authToken){ showToast('Log in first to buy or license this.'); return; }
+    try{
+      const orderRes = await fetch(`${API_BASE}/listings/${listingId}/purchase-order`, {
+        method: 'POST', headers: authHeaders()
+      });
+      const order = await orderRes.json();
+      if(!orderRes.ok){ showToast(order.error || 'Could not start purchase.'); return; }
+
+      const rzp = new Razorpay({
+        key: order.razorpayKeyId,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'OnlineDaftar Video Market',
+        description: title,
+        order_id: order.orderId,
+        theme: { color: '#CFA645' },
+        handler: async function(response){
+          const verifyRes = await fetch(`${API_BASE}/listings/verify`, {
+            method: 'POST', headers: authHeaders(),
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            })
+          });
+          if(verifyRes.ok){
+            showToast(`Purchased "${title}" — check My Library below.`);
+            loadMyLibrary();
+          } else {
+            showToast('Payment succeeded but verification failed — check backend logs.');
+          }
+        },
+        modal: { ondismiss: function(){ showToast('Purchase cancelled.'); } }
+      });
+      rzp.on('payment.failed', function(resp){ showToast('Payment failed: ' + resp.error.description); });
+      rzp.open();
+    } catch(e){ showToast('Backend unreachable.'); }
+  }
+
+  async function loadMyLibrary(){
+    if(!authToken) return;
+    try{
+      const res = await fetch(`${API_BASE}/listings/mine/library`, { headers: authHeaders() });
+      if(!res.ok) return;
+      const items = await res.json();
+      const container = document.getElementById('myLibraryList');
+      if(items.length === 0) return;
+
+      container.innerHTML = items.map(item => {
+        const thumb = item.preview_url ? `<img src="${item.preview_url}" alt="">` :
+          `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>`;
+        const expiryNote = item.expires_at
+          ? (item.active ? `Rental active until ${new Date(item.expires_at).toLocaleDateString('en-IN')}` : 'Rental expired')
+          : 'Yours to keep';
+        return `
+          <div class="library-item">
+            <div class="library-thumb">${thumb}</div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:13.5px;">${item.title}</div>
+              <div style="font-size:11.5px;color:var(--muted-2);">${item.category} · ${expiryNote}</div>
+            </div>
+            ${item.active ? `<a href="${item.file_url || '#'}" target="_blank" class="btn">Open</a>` : `<span class="stamp review">EXPIRED</span>`}
+          </div>`;
+      }).join('');
+    } catch(e){ /* backend unreachable — keep empty state */ }
+  }
+
+  async function loadPostedTasksFromBackend(){
+    const list = document.getElementById('myTasksList');
+    if(!authToken) return; // keep the default empty-state placeholder
+    try{
+      const res = await fetch(`${API_BASE}/tasks/posted`, { headers: authHeaders() });
+      if(!res.ok) return;
+      const tasks = await res.json();
+      if(tasks.length === 0) return; // keep default empty state
+
+      list.innerHTML = tasks.map(t => {
+        const amt = Math.round(t.pay_paise/100).toLocaleString('en-IN');
+        let statusStamp = '';
+        if(t.status === 'draft') statusStamp = '<span class="stamp pending">UNFUNDED</span>';
+        else if(t.status === 'open') statusStamp = '<span class="stamp pending">OPEN — NO WORKER YET</span>';
+        else if(t.status === 'accepted') statusStamp = '<span class="stamp pending">IN PROGRESS</span>';
+        else if(t.status === 'submitted') statusStamp = '<span class="stamp review">AWAITING YOUR REVIEW</span>';
+        else if(t.status === 'approved') statusStamp = '<span class="stamp paid">APPROVED &amp; PAID</span>';
+        else if(t.status === 'rejected') statusStamp = '<span class="stamp review">REJECTED</span>';
+
+        let submissionBlock = '';
+        if(t.status === 'submitted' && t.submission_id){
+          submissionBlock = `
+            <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-strong);">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Submitted by <b>${t.worker_name || 'worker'}</b></div>
+              ${t.submission_note ? `<div style="font-size:13px;margin-bottom:6px;">"${t.submission_note}"</div>` : ''}
+              ${t.proof_url ? `<a href="${t.proof_url}" target="_blank" style="font-size:12.5px;color:var(--gold-soft);">View proof link →</a>` : ''}
+              <div style="display:flex;gap:10px;margin-top:10px;">
+                <button class="btn" style="flex:1" onclick="approveSubmission('${t.id}')">Approve &amp; pay ₹${amt}</button>
+                <button class="btn ghost" style="flex:1" onclick="rejectSubmission('${t.id}')">Reject</button>
+              </div>
+            </div>`;
+        }
+
+        return `
+          <div class="task-card" style="margin-bottom:14px;">
+            <div class="task-card-top">
+              <span class="task-cat">${t.category}</span>
+              <span class="task-pay">₹${amt}</span>
+            </div>
+            <h3>${t.title}</h3>
+            <div style="margin-top:4px;">${statusStamp}</div>
+            ${submissionBlock}
+          </div>`;
+      }).join('');
+    } catch(e){ /* backend unreachable — keep default empty state */ }
+  }
+
+  async function approveSubmission(taskId){
+    try{
+      const res = await fetch(`${API_BASE}/tasks/${taskId}/approve`, { method: 'POST', headers: authHeaders() });
+      const data = await res.json();
+      if(!res.ok){ showToast(data.error || 'Could not approve.'); return; }
+      showToast('Approved — payment released to the worker.');
+      loadPostedTasksFromBackend();
+    } catch(e){ showToast('Backend unreachable.'); }
+  }
+
+  async function rejectSubmission(taskId){
+    const reason = prompt('Optional: reason for rejecting this submission') || '';
+    try{
+      const res = await fetch(`${API_BASE}/tasks/${taskId}/reject`, {
+        method: 'POST', headers: authHeaders(), body: JSON.stringify({ reason })
+      });
+      const data = await res.json();
+      if(!res.ok){ showToast(data.error || 'Could not reject.'); return; }
+      showToast('Submission rejected.');
+      loadPostedTasksFromBackend();
+    } catch(e){ showToast('Backend unreachable.'); }
+  }
+
+  // ===================== Notifications (real) =====================
+  async function loadNotificationsFromBackend(){
+    if(!authToken) return;
+    try{
+      const res = await fetch(`${API_BASE}/notifications`, { headers: authHeaders() });
+      if(!res.ok) return;
+      const data = await res.json();
+      const badge = document.getElementById('notifBadge');
+      const sub = document.getElementById('notifSub');
+      if(data.unreadCount > 0){
+        badge.style.display = 'flex';
+        badge.textContent = data.unreadCount;
+      } else {
+        badge.style.display = 'none';
+      }
+      sub.textContent = data.unreadCount + ' unread';
+
+      if(data.notifications.length === 0) return; // keep the demo notification content as filler
+
+      const iconFor = (title) => {
+        if(/approved|paid|released/i.test(title)) return {cls:'mint', svg:'<path d="M20 6L9 17l-5-5"/>'};
+        if(/rejected/i.test(title)) return {cls:'danger', svg:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>'};
+        if(/submission|review/i.test(title)) return {cls:'indigo', svg:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'};
+        return {cls:'mustard', svg:'<path d="M12 2l2.9 6.3 6.9.7-5.1 4.7 1.5 6.8L12 17l-6.2 3.5 1.5-6.8-5.1-4.7 6.9-.7z"/>'};
+      };
+
+      const container = document.querySelector('#notifications');
+      const existingLedgers = container.querySelectorAll('.ledger');
+      existingLedgers.forEach(l => l.remove());
+      const existingLabels = container.querySelectorAll('.notif-day-label');
+      existingLabels.forEach(l => l.remove());
+
+      const label = document.createElement('div');
+      label.className = 'notif-day-label';
+      label.textContent = 'Your activity';
+      container.appendChild(label);
+
+      const ledger = document.createElement('div');
+      ledger.className = 'ledger';
+      ledger.innerHTML = data.notifications.map(n => {
+        const icon = iconFor(n.title);
+        const time = new Date(n.created_at).toLocaleString('en-IN', { day:'numeric', month:'short', hour:'numeric', minute:'2-digit' });
+        return `
+          <div class="notif-row ${n.read ? '' : 'unread'}">
+            <div class="notif-icon ${icon.cls}">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${icon.svg}</svg>
+            </div>
+            <div class="notif-body">
+              <div class="title"><b>${n.title}</b> — ${n.body || ''}</div>
+              <div class="time">${time}</div>
+            </div>
+          </div>`;
+      }).join('');
+      container.appendChild(ledger);
+    } catch(e){ /* backend unreachable — keep demo notifications */ }
+  }
+
+  let currentPaymentCallback = null;
+
+  // ===================== Toast =====================
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 3400);
+  }
+
+  // ===================== Task browsing =====================
+  function filterTasks(cat, chipEl){
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chipEl.classList.add('active');
+    document.querySelectorAll('#taskGrid .task-card').forEach(card => {
+      const c = card.getAttribute('data-cat');
+      card.style.display = (cat === 'All' || c === cat) ? '' : 'none';
+    });
+  }
+
+  async function acceptTask(btn){
+    const card = btn.closest('.task-card');
+    const title = card.getAttribute('data-title');
+    const pay = card.getAttribute('data-pay');
+    const taskId = card.getAttribute('data-task-id');
+
+    btn.textContent = 'Accepting…';
+    btn.disabled = true;
+
+    // Only real backend tasks (loaded after login) have a data-task-id.
+    // The four sample cards shown before you're connected don't — those
+    // stay a visual-only demo since they don't exist in your database.
+    if(taskId && authToken){
+      try{
+        const res = await fetch(`${API_BASE}/tasks/${taskId}/accept`, {
+          method: 'POST', headers: authHeaders()
+        });
+        if(!res.ok){
+          const err = await res.json().catch(() => ({}));
+          showToast('Could not accept task: ' + (err.error || 'unknown error'));
+          btn.textContent = 'Accept'; btn.disabled = false;
+          return;
+        }
+      } catch(e){
+        showToast('Backend unreachable — task not actually accepted.');
+        btn.textContent = 'Accept'; btn.disabled = false;
+        return;
+      }
+    }
+
+    btn.textContent = 'Accepted ✓';
+    btn.classList.add('ghost');
+    btn.style.pointerEvents = 'none';
+
+    const ledger = document.getElementById('todayLedger');
+    const row = document.createElement('div');
+    row.className = 'ledger-row';
+    row.setAttribute('onclick', 'openTaskDetail(this)');
+    row.setAttribute('data-title', title);
+    row.setAttribute('data-meta', 'Accepted just now · submit proof to get paid');
+    row.setAttribute('data-amt', pay);
+    row.setAttribute('data-status', 'pending');
+    if(taskId) row.setAttribute('data-task-id', taskId);
+    row.innerHTML = `
+      <div class="check"></div>
+      <div class="info">
+        <div class="title">${title}</div>
+        <div class="meta">Accepted just now · submit proof to get paid</div>
+      </div>
+      <div class="amt">+₹${Number(pay).toLocaleString('en-IN')}</div>
+    `;
+    ledger.insertBefore(row, ledger.firstChild);
+    showToast(taskId ? `Task accepted and saved — "${title}".` : `Task accepted (demo card, not saved) — "${title}".`);
+  }
+
+  // ===================== Post a task =====================
+  function updatePostButton(){
+    const amt = document.getElementById('postAmount').value || 0;
+    document.getElementById('postSubmitBtn').textContent =
+      'Post task & fund escrow — ₹' + Number(amt).toLocaleString('en-IN');
+  }
+
+  async function submitPostTask(){
+    const title = document.getElementById('postTitle').value.trim() || 'Untitled task';
+    const category = document.getElementById('postCategory').value;
+    const amt = parseInt(document.getElementById('postAmount').value, 10) || 0;
+    const description = document.getElementById('postDescription').value.trim();
+    const deadline = document.getElementById('postDeadline').value;
+    const proofType = document.getElementById('postProofType').value;
+
+    if(amt <= 0){ showToast('Enter a pay amount before funding escrow.'); return; }
+
+    // Not logged in / backend not reachable → fall back to the visual
+    // simulation so the demo still works standalone.
+    if(!authToken){
+      openPaymentModal({
+        purpose: `Fund escrow for "${title}" (simulated — not logged in)`,
+        amount: amt,
+        onSuccess: function(){
+          addPassbookRow(`Escrow funded — "${title}"`, 'Escrow', 'pending', 'IN ESCROW', -amt, iconClock());
+          showToast(`₹${amt.toLocaleString('en-IN')} moved to escrow (simulated).`);
+          resetPostForm();
+        }
+      });
+      return;
+    }
+
+    const submitBtn = document.getElementById('postSubmitBtn');
+    submitBtn.textContent = 'Creating task…'; submitBtn.disabled = true;
+
+    try{
+      // Step 1: create the task record (starts as 'draft' until escrow is funded)
+      const taskRes = await fetch(`${API_BASE}/tasks`, {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({
+          title, category, payPaise: amt * 100, description,
+          proofType, deadline: deadline || null
+        })
+      });
+      const task = await taskRes.json();
+      if(!taskRes.ok){ throw new Error(task.error || 'Could not create task'); }
+
+      // Step 2: create a Razorpay order for the escrow amount
+      const orderRes = await fetch(`${API_BASE}/payments/create-escrow-order`, {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ taskId: task.id })
+      });
+      const order = await orderRes.json();
+      if(!orderRes.ok){ throw new Error(order.error || 'Could not create payment order'); }
+
+      submitBtn.textContent = 'Post task & fund escrow — ₹' + amt.toLocaleString('en-IN');
+      submitBtn.disabled = false;
+
+      // Step 3: open the REAL Razorpay Checkout widget
+      const rzp = new Razorpay({
+        key: order.razorpayKeyId,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'OnlineDaftar',
+        description: `Fund escrow — ${title}`,
+        order_id: order.orderId,
+        theme: { color: '#CFA645' },
+        handler: async function(response){
+          // Step 4: verify the payment server-side before trusting it
+          const verifyRes = await fetch(`${API_BASE}/payments/verify`, {
+            method: 'POST', headers: authHeaders(),
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              taskId: task.id
+            })
+          });
+          if(verifyRes.ok){
+            addPassbookRow(`Escrow funded — "${title}"`, 'Escrow', 'pending', 'IN ESCROW', -amt, iconClock());
+            showToast(`₹${amt.toLocaleString('en-IN')} really moved to escrow via Razorpay.`);
+            resetPostForm();
+            loadTasksFromBackend();
+          } else {
+            showToast('Payment succeeded but verification failed — check your backend logs.');
+          }
+        },
+        modal: {
+          ondismiss: function(){ showToast('Payment cancelled — task stays unfunded.'); }
+        }
+      });
+      rzp.on('payment.failed', function(resp){
+        showToast('Payment failed: ' + resp.error.description);
+      });
+      rzp.open();
+
+    } catch(err){
+      submitBtn.textContent = 'Post task & fund escrow — ₹' + amt.toLocaleString('en-IN');
+      submitBtn.disabled = false;
+      showToast('Error: ' + err.message);
+    }
+  }
+
+  function resetPostForm(){
+    document.getElementById('postTitle').value = '';
+    document.getElementById('postAmount').value = '';
+    document.getElementById('postDescription').value = '';
+    updatePostButton();
+  }
+
+  // ===================== Wallet =====================
+  async function startWithdraw(){
+    if(state.balance <= 0){ showToast('No balance available to withdraw.'); return; }
+    const amt = state.balance;
+
+    if(!authToken){
+      // Not logged in — simulated flow only
+      openPaymentModal({
+        purpose: 'Withdraw to HDFC •••• 4471 (simulated — not logged in)',
+        amount: amt,
+        onSuccess: function(){
+          addPassbookRow('Withdrawal to UPI', 'Withdrawal', 'verified', 'SENT', -amt, iconArrow());
+          state.balance = 0;
+          updateBalanceUI();
+          showToast('Withdrawal simulated — log in to make this real.');
+        }
+      });
+      return;
+    }
+
+    try{
+      const res = await fetch(`${API_BASE}/payments/withdraw`, {
+        method: 'POST', headers: authHeaders()
+      });
+      const data = await res.json();
+      if(!res.ok){ showToast('Withdrawal failed: ' + (data.error || 'unknown error')); return; }
+
+      addPassbookRow('Withdrawal recorded', 'Withdrawal', 'pending', 'PROCESSING', -amt, iconClock());
+      state.balance = 0;
+      updateBalanceUI();
+      showToast('Withdrawal recorded on your backend. Actual bank transfer needs RazorpayX Payouts connected — see backend README.');
+    } catch(e){
+      showToast('Backend unreachable — withdrawal not recorded.');
+    }
+  }
+
+  function downloadStatement(){
+    const rows = [['Date/Time','Description','Category','Status','Amount']];
+    document.querySelectorAll('#passbookBody tr').forEach(tr => {
+      const cells = tr.querySelectorAll('td');
+      if(cells.length < 4) return;
+      const title = cells[0].querySelector('.title')?.textContent || '';
+      const date = cells[0].querySelector('.date')?.textContent || '';
+      const cat = cells[1].textContent.trim();
+      const status = cells[2].textContent.trim();
+      const amt = cells[3].textContent.trim();
+      rows.push([date, title, cat, status, amt]);
+    });
+    const csv = rows.map(r => r.map(f => '"' + String(f).replace(/"/g,'""') + '"').join(',')).join('\n');
+    const blob = new Blob([csv], {type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'onlinedaftar-statement.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Statement downloaded as CSV.');
+  }
+
+  function updateBalanceUI(){
+    document.getElementById('balanceWalletPill').textContent = '₹' + state.balance.toLocaleString('en-IN');
+    document.getElementById('balancePassbook').textContent = '₹' + state.balance.toLocaleString('en-IN');
+  }
+
+  function addPassbookRow(title, cat, stampClass, stampLabel, amount, iconSvg){
+    const tbody = document.getElementById('passbookBody');
+    const tr = document.createElement('tr');
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-IN', {day:'numeric', month:'short'}) + ', ' +
+                    now.toLocaleTimeString('en-IN', {hour:'numeric', minute:'2-digit'});
+    const amtClass = amount >= 0 ? 'in' : 'out';
+    const amtSign = amount >= 0 ? '+' : '−';
+    tr.innerHTML = `
+      <td class="desc"><div class="title">${title}</div><div class="date">${dateStr}</div></td>
+      <td>${cat}</td>
+      <td><span class="stamp ${stampClass}"><span class="stamp-icon">${iconSvg}</span>${stampLabel}</span></td>
+      <td class="amt-cell ${amtClass}">${amtSign}₹${Math.abs(amount).toLocaleString('en-IN')}</td>
+    `;
+    tbody.insertBefore(tr, tbody.firstChild);
+  }
+
+  function iconArrow(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'; }
+  function iconClock(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>'; }
+
+  // ===================== Notifications =====================
+  function markAllRead(){
+    document.querySelectorAll('.notif-row.unread').forEach(r => r.classList.remove('unread'));
+    const badge = document.getElementById('notifBadge');
+    badge.style.display = 'none';
+    document.getElementById('notifSub').textContent = '0 unread';
+    if(authToken){
+      fetch(`${API_BASE}/notifications/mark-all-read`, { method: 'POST', headers: authHeaders() }).catch(() => {});
+    }
+  }
+
+  // ===================== Task detail / submit proof =====================
+  let currentDetailTaskId = null;
+
+  function openTaskDetail(rowEl){
+    const title = rowEl.getAttribute('data-title');
+    const meta = rowEl.getAttribute('data-meta');
+    const amt = rowEl.getAttribute('data-amt');
+    const status = rowEl.getAttribute('data-status');
+    currentDetailTaskId = rowEl.getAttribute('data-task-id'); // null for demo rows
+
+    document.getElementById('detailTitle').textContent = title;
+    document.getElementById('detailAmt').textContent = '₹' + Number(amt).toLocaleString('en-IN');
+    document.getElementById('detailMeta').textContent = meta;
+
+    const approvedNote = document.getElementById('detailApprovedNote');
+    const pendingActions = document.getElementById('detailPendingActions');
+    if(status === 'approved'){
+      approvedNote.style.display = 'block';
+      pendingActions.style.display = 'none';
+    } else {
+      approvedNote.style.display = 'none';
+      pendingActions.style.display = 'block';
+      document.getElementById('proofNote').value = '';
+      document.getElementById('proofUrl').value = '';
+    }
+
+    document.getElementById('detailOverlay').classList.add('show');
+  }
+
+  function closeDetailModal(){
+    document.getElementById('detailOverlay').classList.remove('show');
+  }
+
+  async function submitTaskProof(){
+    const note = document.getElementById('proofNote').value.trim();
+    const proofUrl = document.getElementById('proofUrl').value.trim();
+    const btn = document.getElementById('submitProofBtn');
+
+    if(!note && !proofUrl){ showToast('Add a note or a proof link before submitting.'); return; }
+
+    if(currentDetailTaskId && authToken){
+      btn.textContent = 'Submitting…'; btn.disabled = true;
+      try{
+        const res = await fetch(`${API_BASE}/tasks/${currentDetailTaskId}/submit`, {
+          method: 'POST', headers: authHeaders(),
+          body: JSON.stringify({ proofUrl, note })
+        });
+        if(!res.ok){
+          const err = await res.json().catch(() => ({}));
+          showToast('Could not submit: ' + (err.error || 'unknown error'));
+          btn.textContent = 'Submit proof for approval'; btn.disabled = false;
+          return;
+        }
+        showToast('Proof submitted — waiting for poster approval.');
+      } catch(e){
+        showToast('Backend unreachable — proof not actually submitted.');
+        btn.textContent = 'Submit proof for approval'; btn.disabled = false;
+        return;
+      }
+    } else {
+      showToast('Proof submitted (demo card — not saved to a real task).');
+    }
+
+    closeDetailModal();
+  }
+
+  // ===================== Simulated payment gateway =====================
+  function openPaymentModal({purpose, amount, onSuccess}){
+    currentPaymentCallback = onSuccess;
+    document.getElementById('paygwPurpose').textContent = purpose;
+    document.getElementById('paygwAmount').textContent = '₹' + amount.toLocaleString('en-IN');
+    const payBtn = document.getElementById('paygwPayBtn');
+    payBtn.textContent = 'Pay ₹' + amount.toLocaleString('en-IN');
+    payBtn.setAttribute('data-amount', amount);
+    document.getElementById('paygwStepPay').style.display = 'block';
+    document.getElementById('paygwStepProcessing').style.display = 'none';
+    document.getElementById('paygwStepSuccess').style.display = 'none';
+    document.getElementById('paygwOverlay').classList.add('show');
+  }
+
+  function closePaymentModal(){
+    document.getElementById('paygwOverlay').classList.remove('show');
+  }
+
+  function switchPayMethod(m, tabEl){
+    document.querySelectorAll('.paygw-tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+    document.getElementById('paygwFieldsUpi').style.display = m === 'upi' ? 'block' : 'none';
+    document.getElementById('paygwFieldsCard').style.display = m === 'card' ? 'block' : 'none';
+    document.getElementById('paygwFieldsNetbanking').style.display = m === 'netbanking' ? 'block' : 'none';
+  }
+
+  function processPayment(){
+    const amount = parseInt(document.getElementById('paygwPayBtn').getAttribute('data-amount'), 10) || 0;
+    document.getElementById('paygwStepPay').style.display = 'none';
+    document.getElementById('paygwStepProcessing').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('paygwStepProcessing').style.display = 'none';
+      document.getElementById('paygwStepSuccess').style.display = 'block';
+      document.getElementById('paygwSuccessSub').textContent = '₹' + amount.toLocaleString('en-IN') + ' processed securely';
+      if(currentPaymentCallback) currentPaymentCallback();
+    }, 1600);
+  }
+
+  // ===================== Username & Password Authentication =====================
+  function switchLegacyAuthTab(tab){
+    hideAuthError();
+    const btnIn = document.getElementById('tabSignIn');
+    const btnUp = document.getElementById('tabSignUp');
+    const stepIn = document.getElementById('authStepSignIn');
+    const stepUp = document.getElementById('authStepSignUp');
+
+    if(tab === 'signin'){
+      btnIn.classList.add('active');
+      btnUp.classList.remove('active');
+      stepIn.style.display = 'block';
+      stepUp.style.display = 'none';
+    } else {
+      btnUp.classList.add('active');
+      btnIn.classList.remove('active');
+      stepUp.style.display = 'block';
+      stepIn.style.display = 'none';
+    }
+  }
+
+  function showAuthError(msg){
+    const el = document.getElementById('authError');
+    if(!el) return;
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+  function hideAuthError(){
+    const el = document.getElementById('authError');
+    if(!el) return;
+    el.classList.remove('show');
+  }
+
+  async function handleLegacyLogin(){
+    hideAuthError();
+    const identifier = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const btn = document.getElementById('loginBtn');
+
+    if(!identifier || !password){
+      showAuthError('Username/email and password are required.');
+      return;
+    }
+
+    btn.textContent = 'Signing in…';
+    btn.disabled = true;
+
+    try{
+      const res = await fetch(API_BASE + '/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier, password })
+      });
+      const data = await res.json();
+      if(!res.ok){
+        showAuthError(data.error || 'Invalid credentials');
+        btn.textContent = 'Sign In with Password';
+        btn.disabled = false;
+        return;
+      }
+      authToken = data.token;
+      document.body.classList.add('authed');
+      if(data.user && data.user.name){
+        const greeting = document.querySelector('#overview h1');
+        if(greeting) greeting.textContent = 'Namaste, ' + data.user.name.split(' ')[0];
+      }
+      showToast('Signed in successfully.');
+      await Promise.all([loadTasksFromBackend(), loadWalletFromBackend(), loadProfileFromBackend(), loadNotificationsFromBackend()]);
+    } catch(err){
+      // Backend offline: allow demo access
+      demoLoginLegacy('worker');
+      showToast('Backend offline — logged in using demo mode.');
+    } finally {
+      btn.textContent = 'Sign In with Password';
+      btn.disabled = false;
+    }
+  }
+
+  async function handleLegacyRegister(){
+    hideAuthError();
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const role = document.getElementById('regRole').value;
+    const btn = document.getElementById('regBtn');
+
+    if(!name || !email || !password){
+      showAuthError('Name, email, and password are required.');
+      return;
+    }
+    if(password.length < 6){
+      showAuthError('Password must be at least 6 characters.');
+      return;
+    }
+
+    btn.textContent = 'Creating account…';
+    btn.disabled = true;
+
+    try{
+      const res = await fetch(API_BASE + '/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, role })
+      });
+      const data = await res.json();
+      if(!res.ok){
+        showAuthError(data.error || 'Could not create account');
+        btn.textContent = 'Create Account';
+        btn.disabled = false;
+        return;
+      }
+      authToken = data.token;
+      document.body.classList.add('authed');
+      showToast('Account created successfully.');
+      await Promise.all([loadTasksFromBackend(), loadWalletFromBackend(), loadProfileFromBackend(), loadNotificationsFromBackend()]);
+    } catch(err){
+      demoLoginLegacy(role);
+      showToast('Backend offline — created account in demo mode.');
+    } finally {
+      btn.textContent = 'Create Account';
+      btn.disabled = false;
+    }
+  }
+
+  function demoLoginLegacy(role){
+    document.body.classList.add('authed');
+    const isPoster = role === 'poster';
+    const userName = isPoster ? 'Arjun Mehta' : 'Priya Sharma';
+    const greeting = document.querySelector('#overview h1');
+    if(greeting) greeting.textContent = 'Namaste, ' + userName.split(' ')[0];
+    showToast('Logged in as ' + (isPoster ? 'Poster' : 'Worker') + ' (Demo Mode)');
+  }
+</script>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<!-- Simulated payment gateway modal -->
+<div class="paygw-overlay" id="paygwOverlay">
+  <div class="paygw-modal">
+    <div class="paygw-header">
+      <div class="paygw-lock">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+        Secure Checkout
+      </div>
+      <button class="paygw-close" onclick="closePaymentModal()">✕</button>
+    </div>
+
+    <div id="paygwStepPay">
+      <div class="paygw-amount-row">
+        <div class="lbl">Amount</div>
+        <div class="val mono" id="paygwAmount">₹0</div>
+      </div>
+      <div class="paygw-purpose" id="paygwPurpose">Fund task escrow</div>
+
+      <div class="paygw-methods">
+        <button class="paygw-tab active" data-m="upi" onclick="switchPayMethod('upi', this)">UPI</button>
+        <button class="paygw-tab" data-m="card" onclick="switchPayMethod('card', this)">Card</button>
+        <button class="paygw-tab" data-m="netbanking" onclick="switchPayMethod('netbanking', this)">Netbanking</button>
+      </div>
+
+      <div id="paygwFieldsUpi">
+        <div class="field"><label>UPI ID</label><input type="text" placeholder="yourname@okhdfc" value="priya.s@okhdfc"></div>
+      </div>
+      <div id="paygwFieldsCard" style="display:none">
+        <div class="field"><label>Card number</label><input type="text" placeholder="4111 1111 1111 1111"></div>
+        <div class="field-row">
+          <div class="field"><label>Expiry</label><input type="text" placeholder="MM/YY"></div>
+          <div class="field"><label>CVV</label><input type="text" placeholder="•••"></div>
+        </div>
+      </div>
+      <div id="paygwFieldsNetbanking" style="display:none">
+        <div class="field"><label>Bank</label><select><option>HDFC Bank</option><option>SBI</option><option>ICICI Bank</option><option>Axis Bank</option></select></div>
+      </div>
+
+      <button class="btn block" onclick="processPayment()" id="paygwPayBtn">Pay ₹0</button>
+      <div class="paygw-safe-note">🔒 This is a simulated checkout for demo purposes — no real payment is sent.</div>
+    </div>
+
+    <div id="paygwStepProcessing" style="display:none">
+      <div class="paygw-spinner"></div>
+      <div class="paygw-processing-text">Processing your payment…</div>
+      <div class="paygw-processing-sub">Do not close this window</div>
+    </div>
+
+    <div id="paygwStepSuccess" style="display:none">
+      <div class="paygw-success-check">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <div class="paygw-success-title" id="paygwSuccessTitle">Payment successful</div>
+      <div class="paygw-success-sub" id="paygwSuccessSub">₹0 processed</div>
+      <button class="btn block" onclick="closePaymentModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Task detail / submit proof modal -->
+<div class="paygw-overlay" id="detailOverlay">
+  <div class="paygw-modal">
+    <div class="paygw-header">
+      <div class="paygw-lock" id="detailHeaderLabel">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Task detail
+      </div>
+      <button class="paygw-close" onclick="closeDetailModal()">✕</button>
+    </div>
+
+    <div id="detailStepView">
+      <div class="paygw-amount-row">
+        <div class="lbl" id="detailTitle">Task title</div>
+        <div class="val mono" id="detailAmt">₹0</div>
+      </div>
+      <div class="paygw-purpose" id="detailMeta">Poster · time</div>
+
+      <div id="detailApprovedNote" style="display:none">
+        <div class="auth-demo-note show" style="color:var(--mint);background:var(--mint-dim);border-color:rgba(63,168,115,0.3);">
+          ✓ This task was approved and paid out to your wallet.
+        </div>
+      </div>
+
+      <div id="detailPendingActions" style="display:none">
+        <div class="field">
+          <label>Submission note</label>
+          <textarea id="proofNote" placeholder="Describe what you completed…"></textarea>
+        </div>
+        <div class="field">
+          <label>Proof link (photo/file URL)</label>
+          <input type="text" id="proofUrl" placeholder="https://...">
+        </div>
+        <button class="btn block" onclick="submitTaskProof()" id="submitProofBtn">Submit proof for approval</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
