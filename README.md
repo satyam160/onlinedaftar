@@ -1,7 +1,7 @@
 # OnlineDaftar
 
 A gig-task marketplace for India — post small paid tasks, workers complete
-them, escrow-protected payments via Razorpay, OTP login by mobile/email.
+them, escrow-protected payments via Razorpay,  login by Username and Password.
 
 ## Structure
 
