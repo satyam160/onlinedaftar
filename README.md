@@ -18,6 +18,6 @@ onlinedaftar/
 ## Quick start
 
 1. See `backend/README.md` for full backend setup (database, Razorpay keys, etc.)
-2. Once the backend is running (`npm run dev` inside `backend/`)`.
+2. Once the backend is running (`npm run dev` inside `backend/`).
 
 
